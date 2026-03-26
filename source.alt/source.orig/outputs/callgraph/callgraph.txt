@@ -1,0 +1,79 @@
+Call graph node <<null function>><<0x10511be10>>  #uses=0
+  CS<None> calls function 'initialize'
+  CS<None> calls function 'ALIM'
+  CS<None> calls function 'Inhibit_Biased_Climb'
+  CS<None> calls function 'Non_Crossing_Biased_Climb'
+  CS<None> calls function 'Non_Crossing_Biased_Descend'
+  CS<None> calls function 'Own_Below_Threat'
+  CS<None> calls function 'Own_Above_Threat'
+  CS<None> calls function 'alt_sep_test'
+  CS<None> calls function 'main'
+  CS<None> calls function 'fprintf'
+  CS<None> calls function 'exit'
+  CS<None> calls function 'atoi'
+
+Call graph node for function: 'ALIM'<<0x10511d710>>  #uses=5
+
+Call graph node for function: 'Inhibit_Biased_Climb'<<0x10511d7c0>>  #uses=3
+
+Call graph node for function: 'Non_Crossing_Biased_Climb'<<0x10511d7f0>>  #uses=2
+  CS<0x10511ee70> calls function 'Inhibit_Biased_Climb'
+  CS<0x10511f090> calls function 'Own_Below_Threat'
+  CS<0x10511f1d0> calls function 'Own_Below_Threat'
+  CS<0x10511f380> calls function 'ALIM'
+  CS<0x10511d200> calls function 'Own_Above_Threat'
+  CS<0x10511d4e0> calls function 'ALIM'
+
+Call graph node for function: 'Non_Crossing_Biased_Descend'<<0x10511a570>>  #uses=2
+  CS<0x1051207c0> calls function 'Inhibit_Biased_Climb'
+  CS<0x105120900> calls function 'Own_Below_Threat'
+  CS<0x105120a40> calls function 'ALIM'
+  CS<0x105120cd0> calls function 'Own_Above_Threat'
+  CS<0x105120d50> calls function 'Own_Above_Threat'
+  CS<0x105120dd0> calls function 'ALIM'
+
+Call graph node for function: 'Own_Above_Threat'<<0x10511a3d0>>  #uses=5
+
+Call graph node for function: 'Own_Below_Threat'<<0x10511a370>>  #uses=5
+
+Call graph node for function: 'alt_sep_test'<<0x10511a820>>  #uses=2
+  CS<0x1051212d0> calls function 'Non_Crossing_Biased_Climb'
+  CS<0x105121350> calls function 'Own_Below_Threat'
+  CS<0x7e6cd4020> calls function 'Non_Crossing_Biased_Descend'
+  CS<0x7e6cd40a0> calls function 'Own_Above_Threat'
+
+Call graph node for function: 'atoi'<<0x10511a600>>  #uses=1
+  CS<None> calls external node
+
+Call graph node for function: 'exit'<<0x10511a5d0>>  #uses=3
+  CS<None> calls external node
+
+Call graph node for function: 'fprintf'<<0x10511a5a0>>  #uses=7
+  CS<None> calls external node
+
+Call graph node for function: 'initialize'<<0x10511bea0>>  #uses=2
+
+Call graph node for function: 'main'<<0x10511a850>>  #uses=1
+  CS<0x7e70d8d20> calls function 'fprintf'
+  CS<0x7e70d8de0> calls function 'fprintf'
+  CS<0x7e70d8ea0> calls function 'fprintf'
+  CS<0x7e70d8f60> calls function 'fprintf'
+  CS<0x7e70d9020> calls function 'fprintf'
+  CS<0x7e70c07c0> calls function 'exit'
+  CS<0x7e6cd4120> calls function 'initialize'
+  CS<0x7e70c0900> calls external node
+  CS<0x7e70c0a40> calls external node
+  CS<0x7e70c0b80> calls external node
+  CS<0x7e70c0cc0> calls external node
+  CS<0x7e70c0e00> calls external node
+  CS<0x7e70c0f40> calls external node
+  CS<0x7e70c1080> calls external node
+  CS<0x7e70c11c0> calls external node
+  CS<0x7e70c1300> calls external node
+  CS<0x7e70c1440> calls external node
+  CS<0x7e70c1580> calls external node
+  CS<0x7e70c16c0> calls external node
+  CS<0x7e6cd41a0> calls function 'alt_sep_test'
+  CS<0x7e6cd8080> calls function 'fprintf'
+  CS<0x7e70c1760> calls function 'exit'
+

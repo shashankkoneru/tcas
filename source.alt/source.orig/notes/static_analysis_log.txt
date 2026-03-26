@@ -1,0 +1,50 @@
+Static Analysis Log for tcas
+
+Working directory:
+/Users/shashankkoneru/Desktop/COMS_4130/tcas/source.alt/source.orig
+
+Files originally present:
+- tcas.c
+- tcas
+- tcas.bc
+- tcas.ll
+
+Compilation attempt:
+gcc tcas.c -o tcas
+
+Result:
+Compilation failed because the source uses older C syntax, including implicit function declarations and an old-style main definition.
+
+Execution test:
+./tcas 700 1 1 1000 200 900 0 400 200 0 1 1
+
+Result:
+Program executed successfully and returned 0 using the existing executable in the directory.
+
+LLVM setup:
+Installed LLVM through Homebrew.
+Verified with:
+$(brew --prefix llvm)/bin/opt --version
+
+LLVM version:
+Homebrew LLVM version 22.1.1
+
+Commands used:
+1. mkdir -p outputs/ir
+2. mkdir -p outputs/callgraph
+3. mkdir -p outputs/cfg
+4. mkdir -p outputs/dependencies
+5. mkdir -p notes
+6. cp tcas.bc outputs/ir/
+7. cp tcas.ll outputs/ir/
+8. $(brew --prefix llvm)/bin/opt -passes=print-callgraph -disable-output outputs/ir/tcas.bc > outputs/callgraph/callgraph.txt 2>&1
+9. $(brew --prefix llvm)/bin/opt -passes=dot-cfg -disable-output outputs/ir/tcas.bc
+10. find . -name "*.dot"
+11. mv .*.dot outputs/cfg/
+
+Key observations:
+- main calls initialize and alt_sep_test
+- main also calls fprintf and exit
+- alt_sep_test calls Non_Crossing_Biased_Climb, Own_Below_Threat, Non_Crossing_Biased_Descend, and Own_Above_Threat
+- CFG files were generated for all major functions
+- The core decision logic is in alt_sep_test

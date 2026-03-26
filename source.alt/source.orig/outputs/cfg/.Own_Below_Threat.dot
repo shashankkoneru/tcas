@@ -1,0 +1,5 @@
+digraph "CFG for 'Own_Below_Threat' function" {
+	label="CFG for 'Own_Below_Threat' function";
+
+	Node0x72b0d8190 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870", fontname="Courier",label="{0:\l|  %1 = load i32, ptr @Own_Tracked_Alt, align 4\l  %2 = load i32, ptr @Other_Tracked_Alt, align 4\l  %3 = icmp slt i32 %1, %2\l  %4 = zext i1 %3 to i32\l  ret i32 %4\l}"];
+}

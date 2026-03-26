@@ -1,0 +1,52 @@
+Dependency Summary for tcas.c
+
+1. enabled depends on:
+- High_Confidence
+- Own_Tracked_Alt_Rate
+- Cur_Vertical_Sep
+
+2. tcas_equipped depends on:
+- Other_Capability
+
+3. intent_not_known depends on:
+- Two_of_Three_Reports_Valid
+- Other_RAC
+
+4. need_upward_RA depends on:
+- Non_Crossing_Biased_Climb()
+- Own_Below_Threat()
+
+5. need_downward_RA depends on:
+- Non_Crossing_Biased_Descend()
+- Own_Above_Threat()
+
+6. final alt_sep output depends on:
+- enabled
+- tcas_equipped
+- intent_not_known
+- need_upward_RA
+- need_downward_RA
+
+7. Non_Crossing_Biased_Climb depends on:
+- Inhibit_Biased_Climb()
+- Down_Separation
+- Own_Below_Threat()
+- Own_Above_Threat()
+- Cur_Vertical_Sep
+- Up_Separation
+- ALIM()
+
+8. Non_Crossing_Biased_Descend depends on:
+- Inhibit_Biased_Climb()
+- Down_Separation
+- Own_Below_Threat()
+- Own_Above_Threat()
+- Cur_Vertical_Sep
+- Up_Separation
+- ALIM()
+
+9. ALIM depends on:
+- Alt_Layer_Value
+- Positive_RA_Alt_Thresh
+
+ 

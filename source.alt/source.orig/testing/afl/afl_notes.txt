@@ -1,0 +1,21 @@
+AFL Testing Notes for tcas
+
+Working directory:
+source.alt/source.orig/testing/afl
+
+Procedure:
+1. Created a separate fuzzing copy of tcas.c
+2. Added minor fixes needed for compilation
+3. Renamed the original main function to old_main
+4. Wrote a wrapper that reads 12 integers from stdin and calls alt_sep_test
+5. Compiled the target with AFL++ instrumentation using afl-clang-fast
+6. Created 6 seed inputs
+7. Ran AFL++ and collected fuzzing results
+
+Current results:
+- Queue inputs discovered: 14
+- Crash files found: 4
+- Hangs found: 0
+
+Observations:
+AFL++ successfully fuzzed the wrapped tcas program and expanded beyond the initial seed set. Crash inputs were found and should be manually checked to confirm whether they are real reproducible crashes.

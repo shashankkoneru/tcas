@@ -1,0 +1,12 @@
+AFL Crash Summary for tcas
+
+AFL++ generated 3 crash inputs during fuzzing.
+
+Crash files:
+- id:000000,sig:11,...
+- id:000001,sig:11,...
+- id:000002,sig:11,...
+
+These crashes appear to be caused by malformed mutated inputs. One likely cause is an invalid Alt_Layer_Value being used as an index into Positive_RA_Alt_Thresh[4], which can lead to an out-of-bounds access in ALIM().
+
+This is useful for the project because it shows that fuzzing was able to discover behaviors not covered by the original seed inputs.

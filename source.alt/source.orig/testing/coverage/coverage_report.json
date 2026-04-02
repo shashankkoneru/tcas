@@ -1,0 +1,432 @@
+{
+  "source_file": "tcas.c",
+  "test_suite": "Ryan's 12 hand-crafted tests (testing/test_cases.txt) plus shipped testplans.alt/universe lines with exactly 12 integers per line (1578 of 1608 lines; 30 lines are wrapped/invalid single-line format)",
+  "total_runs": 1590,
+  "covered_lines": [
+    48,
+    50,
+    51,
+    52,
+    53,
+    54,
+    56,
+    58,
+    61,
+    63,
+    66,
+    72,
+    73,
+    75,
+    77,
+    80,
+    82,
+    85,
+    91,
+    92,
+    94,
+    95,
+    98,
+    100,
+    103,
+    105,
+    108,
+    110,
+    113,
+    119,
+    120,
+    121,
+    123,
+    125,
+    128,
+    129,
+    130,
+    135,
+    137,
+    138,
+    139,
+    140,
+    142,
+    143,
+    145,
+    148,
+    152,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    175,
+    176
+  ],
+  "uncovered_lines": [
+    134,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159
+  ],
+  "total_executable": 69,
+  "total_covered": 62,
+  "statement_coverage_pct": 89.86,
+  "branch_coverage_pct": 87.5,
+  "branches_executed_pct": 100.0,
+  "line_details": [
+    {
+      "line": 48,
+      "hits": 1590,
+      "source": "void initialize()"
+    },
+    {
+      "line": 50,
+      "hits": 1590,
+      "source": "    Positive_RA_Alt_Thresh[0] = 400;"
+    },
+    {
+      "line": 51,
+      "hits": 1590,
+      "source": "    Positive_RA_Alt_Thresh[1] = 500;"
+    },
+    {
+      "line": 52,
+      "hits": 1590,
+      "source": "    Positive_RA_Alt_Thresh[2] = 640;"
+    },
+    {
+      "line": 53,
+      "hits": 1590,
+      "source": "    Positive_RA_Alt_Thresh[3] = 740;"
+    },
+    {
+      "line": 54,
+      "hits": 1590,
+      "source": "}"
+    },
+    {
+      "line": 56,
+      "hits": 1144,
+      "source": "int ALIM ()"
+    },
+    {
+      "line": 58,
+      "hits": 1144,
+      "source": " return Positive_RA_Alt_Thresh[Alt_Layer_Value];"
+    },
+    {
+      "line": 61,
+      "hits": 1790,
+      "source": "int Inhibit_Biased_Climb ()"
+    },
+    {
+      "line": 63,
+      "hits": 1790,
+      "source": "    return (Climb_Inhibit ? Up_Separation + NOZCROSS : Up_Separation);"
+    },
+    {
+      "line": 66,
+      "hits": 895,
+      "source": "bool Non_Crossing_Biased_Climb()"
+    },
+    {
+      "line": 72,
+      "hits": 895,
+      "source": "    upward_preferred = Inhibit_Biased_Climb() > Down_Separation;"
+    },
+    {
+      "line": 73,
+      "hits": 895,
+      "source": "    if (upward_preferred)"
+    },
+    {
+      "line": 75,
+      "hits": 482,
+      "source": "\tresult = !(Own_Below_Threat()) || ((Own_Below_Threat()) && (!(Down_Separation >= ALIM())));"
+    },
+    {
+      "line": 77,
+      "hits": 482,
+      "source": "    }"
+    },
+    {
+      "line": 80,
+      "hits": 413,
+      "source": "\tresult = Own_Above_Threat() && (Cur_Vertical_Sep >= MINSEP) && (Up_Separation >= ALIM());"
+    },
+    {
+      "line": 82,
+      "hits": 895,
+      "source": "    return result;"
+    },
+    {
+      "line": 85,
+      "hits": 895,
+      "source": "bool Non_Crossing_Biased_Descend()"
+    },
+    {
+      "line": 91,
+      "hits": 895,
+      "source": "    upward_preferred = Inhibit_Biased_Climb() > Down_Separation;"
+    },
+    {
+      "line": 92,
+      "hits": 895,
+      "source": "    if (upward_preferred)"
+    },
+    {
+      "line": 94,
+      "hits": 482,
+      "source": "\tresult = Own_Below_Threat() && (Cur_Vertical_Sep >= MINSEP) && (Down_Separation >= ALIM());"
+    },
+    {
+      "line": 95,
+      "hits": 482,
+      "source": "    }"
+    },
+    {
+      "line": 98,
+      "hits": 413,
+      "source": "\tresult = !(Own_Above_Threat()) || ((Own_Above_Threat()) && (Up_Separation >= ALIM()));"
+    },
+    {
+      "line": 100,
+      "hits": 895,
+      "source": "    return result;"
+    },
+    {
+      "line": 103,
+      "hits": 1724,
+      "source": "bool Own_Below_Threat()"
+    },
+    {
+      "line": 105,
+      "hits": 1724,
+      "source": "    return (Own_Tracked_Alt < Other_Tracked_Alt);"
+    },
+    {
+      "line": 108,
+      "hits": 1542,
+      "source": "bool Own_Above_Threat()"
+    },
+    {
+      "line": 110,
+      "hits": 1542,
+      "source": "    return (Other_Tracked_Alt < Own_Tracked_Alt);"
+    },
+    {
+      "line": 113,
+      "hits": 1590,
+      "source": "int alt_sep_test()"
+    },
+    {
+      "line": 119,
+      "hits": 1590,
+      "source": "    enabled = High_Confidence && (Own_Tracked_Alt_Rate <= OLEV) && (Cur_Vertical_Sep > MAXALTDIFF);"
+    },
+    {
+      "line": 120,
+      "hits": 1590,
+      "source": "    tcas_equipped = Other_Capability == TCAS_TA;"
+    },
+    {
+      "line": 121,
+      "hits": 1590,
+      "source": "    intent_not_known = Two_of_Three_Reports_Valid && Other_RAC == NO_INTENT;"
+    },
+    {
+      "line": 123,
+      "hits": 1590,
+      "source": "    alt_sep = UNRESOLVED;"
+    },
+    {
+      "line": 125,
+      "hits": 1590,
+      "source": "    if (enabled && ((tcas_equipped && intent_not_known) || !tcas_equipped))"
+    },
+    {
+      "line": 128,
+      "hits": 895,
+      "source": "\tneed_upward_RA = Non_Crossing_Biased_Climb() && Own_Below_Threat();"
+    },
+    {
+      "line": 129,
+      "hits": 895,
+      "source": "\tneed_downward_RA = Non_Crossing_Biased_Descend() && Own_Above_Threat();"
+    },
+    {
+      "line": 130,
+      "hits": 895,
+      "source": "\tif (need_upward_RA && need_downward_RA)"
+    },
+    {
+      "line": 134,
+      "hits": 0,
+      "source": "\t    alt_sep = UNRESOLVED;"
+    },
+    {
+      "line": 135,
+      "hits": 895,
+      "source": "\telse if (need_upward_RA){"
+    },
+    {
+      "line": 137,
+      "hits": 149,
+      "source": "\t    alt_sep = UPWARD_RA;"
+    },
+    {
+      "line": 138,
+      "hits": 149,
+      "source": "    }"
+    },
+    {
+      "line": 139,
+      "hits": 746,
+      "source": "\telse if (need_downward_RA)"
+    },
+    {
+      "line": 140,
+      "hits": 129,
+      "source": "\t    alt_sep = DOWNWARD_RA;"
+    },
+    {
+      "line": 142,
+      "hits": 617,
+      "source": "\t    alt_sep = UNRESOLVED;"
+    },
+    {
+      "line": 143,
+      "hits": 895,
+      "source": "    }"
+    },
+    {
+      "line": 145,
+      "hits": 2750,
+      "source": "    return alt_sep;"
+    },
+    {
+      "line": 148,
+      "hits": 1590,
+      "source": "main(argc, argv)"
+    },
+    {
+      "line": 152,
+      "hits": 1590,
+      "source": "    if(argc < 13)"
+    },
+    {
+      "line": 154,
+      "hits": 0,
+      "source": "\tfprintf(stdout, \"Error: Command line arguments are\\n\");"
+    },
+    {
+      "line": 155,
+      "hits": 0,
+      "source": "\tfprintf(stdout, \"Cur_Vertical_Sep, High_Confidence, Two_of_Three_Reports_Valid\\n\");"
+    },
+    {
+      "line": 156,
+      "hits": 0,
+      "source": "\tfprintf(stdout, \"Own_Tracked_Alt, Own_Tracked_Alt_Rate, Other_Tracked_Alt\\n\");"
+    },
+    {
+      "line": 157,
+      "hits": 0,
+      "source": "\tfprintf(stdout, \"Alt_Layer_Value, Up_Separation, Down_Separation\\n\");"
+    },
+    {
+      "line": 158,
+      "hits": 0,
+      "source": "\tfprintf(stdout, \"Other_RAC, Other_Capability, Climb_Inhibit\\n\");"
+    },
+    {
+      "line": 159,
+      "hits": 0,
+      "source": "\texit(1);"
+    },
+    {
+      "line": 161,
+      "hits": 1590,
+      "source": "    initialize();"
+    },
+    {
+      "line": 162,
+      "hits": 1590,
+      "source": "    Cur_Vertical_Sep = atoi(argv[1]);"
+    },
+    {
+      "line": 163,
+      "hits": 1590,
+      "source": "    High_Confidence = atoi(argv[2]);"
+    },
+    {
+      "line": 164,
+      "hits": 1590,
+      "source": "    Two_of_Three_Reports_Valid = atoi(argv[3]);"
+    },
+    {
+      "line": 165,
+      "hits": 1590,
+      "source": "    Own_Tracked_Alt = atoi(argv[4]);"
+    },
+    {
+      "line": 166,
+      "hits": 1590,
+      "source": "    Own_Tracked_Alt_Rate = atoi(argv[5]);"
+    },
+    {
+      "line": 167,
+      "hits": 1590,
+      "source": "    Other_Tracked_Alt = atoi(argv[6]);"
+    },
+    {
+      "line": 168,
+      "hits": 1590,
+      "source": "    Alt_Layer_Value = atoi(argv[7]);"
+    },
+    {
+      "line": 169,
+      "hits": 1590,
+      "source": "    Up_Separation = atoi(argv[8]);"
+    },
+    {
+      "line": 170,
+      "hits": 1590,
+      "source": "    Down_Separation = atoi(argv[9]);"
+    },
+    {
+      "line": 171,
+      "hits": 1590,
+      "source": "    Other_RAC = atoi(argv[10]);"
+    },
+    {
+      "line": 172,
+      "hits": 1590,
+      "source": "    Other_Capability = atoi(argv[11]);"
+    },
+    {
+      "line": 173,
+      "hits": 1590,
+      "source": "    Climb_Inhibit = atoi(argv[12]);"
+    },
+    {
+      "line": 175,
+      "hits": 1590,
+      "source": "    fprintf(stdout, \"%d\\n\", alt_sep_test());"
+    },
+    {
+      "line": 176,
+      "hits": 1590,
+      "source": "    exit(0);"
+    }
+  ],
+  "branches_total": 48,
+  "branches_taken": 42
+}

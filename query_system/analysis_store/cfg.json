@@ -1,0 +1,1494 @@
+{
+  "initialize": {
+    "function": "initialize",
+    "num_blocks": 1,
+    "num_edges": 0,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "store i32 400, ptr @Positive_RA_Alt_Thresh, align 4",
+          "store i32 500, ptr getelementptr inbounds ([4 x i32], ptr",
+          "... @Positive_RA_Alt_Thresh, i64 0, i64 1), align 4",
+          "store i32 640, ptr getelementptr inbounds ([4 x i32], ptr",
+          "... @Positive_RA_Alt_Thresh, i64 0, i64 2), align 4",
+          "store i32 740, ptr getelementptr inbounds ([4 x i32], ptr",
+          "... @Positive_RA_Alt_Thresh, i64 0, i64 3), align 4",
+          "ret void"
+        ],
+        "successors": [],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": true
+      }
+    ],
+    "edges": []
+  },
+  "ALIM": {
+    "function": "ALIM",
+    "num_blocks": 1,
+    "num_edges": 0,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "%1 = load i32, ptr @Alt_Layer_Value, align 4",
+          "%2 = sext i32 %1 to i64",
+          "%3 = getelementptr inbounds [4 x i32], ptr @Positive_RA_Alt_Thresh, i64 0,",
+          "... i64 %2",
+          "%4 = load i32, ptr %3, align 4",
+          "ret i32 %4"
+        ],
+        "successors": [],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": true
+      }
+    ],
+    "edges": []
+  },
+  "Inhibit_Biased_Climb": {
+    "function": "Inhibit_Biased_Climb",
+    "num_blocks": 4,
+    "num_edges": 4,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "%1 = load i32, ptr @Climb_Inhibit, align 4",
+          "%2 = icmp ne i32 %1, 0",
+          "br i1 %2, label %3, label %6"
+        ],
+        "successors": [
+          "3",
+          "6"
+        ],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": false
+      },
+      {
+        "block": "3",
+        "instructions": [
+          "3:",
+          "%4 = load i32, ptr @Up_Separation, align 4",
+          "%5 = add nsw i32 %4, 100",
+          "br label %8"
+        ],
+        "successors": [
+          "8"
+        ],
+        "predecessors": [
+          "0"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "6",
+        "instructions": [
+          "6:",
+          "%7 = load i32, ptr @Up_Separation, align 4",
+          "br label %8"
+        ],
+        "successors": [
+          "8"
+        ],
+        "predecessors": [
+          "0"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "8",
+        "instructions": [
+          "8:",
+          "%9 = phi i32 [ %5, %3 ], [ %7, %6 ]",
+          "ret i32 %9"
+        ],
+        "successors": [],
+        "predecessors": [
+          "3",
+          "6"
+        ],
+        "is_entry": false,
+        "is_exit": true
+      }
+    ],
+    "edges": [
+      {
+        "from": "0",
+        "to": "3"
+      },
+      {
+        "from": "0",
+        "to": "6"
+      },
+      {
+        "from": "3",
+        "to": "8"
+      },
+      {
+        "from": "6",
+        "to": "8"
+      }
+    ]
+  },
+  "Non_Crossing_Biased_Climb": {
+    "function": "Non_Crossing_Biased_Climb",
+    "num_blocks": 11,
+    "num_edges": 15,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "%1 = alloca i32, align 4",
+          "%2 = alloca i32, align 4",
+          "%3 = alloca i32, align 4",
+          "%4 = call i32 @Inhibit_Biased_Climb()",
+          "%5 = load i32, ptr @Down_Separation, align 4",
+          "%6 = icmp sgt i32 %4, %5",
+          "%7 = zext i1 %6 to i32",
+          "store i32 %7, ptr %1, align 4",
+          "%8 = load i32, ptr %1, align 4",
+          "%9 = icmp ne i32 %8, 0",
+          "br i1 %9, label %10, label %26"
+        ],
+        "successors": [
+          "10",
+          "26"
+        ],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": false
+      },
+      {
+        "block": "10",
+        "instructions": [
+          "10:",
+          "%11 = call i32 @Own_Below_Threat()",
+          "%12 = icmp ne i32 %11, 0",
+          "br i1 %12, label %13, label %23"
+        ],
+        "successors": [
+          "13",
+          "23"
+        ],
+        "predecessors": [
+          "0"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "13",
+        "instructions": [
+          "13:",
+          "%14 = call i32 @Own_Below_Threat()",
+          "%15 = icmp ne i32 %14, 0",
+          "br i1 %15, label %16, label %21"
+        ],
+        "successors": [
+          "16",
+          "21"
+        ],
+        "predecessors": [
+          "10"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "16",
+        "instructions": [
+          "16:",
+          "%17 = load i32, ptr @Down_Separation, align 4",
+          "%18 = call i32 @ALIM()",
+          "%19 = icmp sge i32 %17, %18",
+          "%20 = xor i1 %19, true",
+          "br label %21"
+        ],
+        "successors": [
+          "21"
+        ],
+        "predecessors": [
+          "13"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "21",
+        "instructions": [
+          "21:",
+          "%22 = phi i1 [ false, %13 ], [ %20, %16 ]",
+          "br label %23"
+        ],
+        "successors": [
+          "23"
+        ],
+        "predecessors": [
+          "13",
+          "16"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "23",
+        "instructions": [
+          "23:",
+          "%24 = phi i1 [ true, %10 ], [ %22, %21 ]",
+          "%25 = zext i1 %24 to i32",
+          "store i32 %25, ptr %3, align 4",
+          "br label %39"
+        ],
+        "successors": [
+          "39"
+        ],
+        "predecessors": [
+          "10",
+          "21"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "26",
+        "instructions": [
+          "26:",
+          "%27 = call i32 @Own_Above_Threat()",
+          "%28 = icmp ne i32 %27, 0",
+          "br i1 %28, label %29, label %36"
+        ],
+        "successors": [
+          "29",
+          "36"
+        ],
+        "predecessors": [
+          "0"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "29",
+        "instructions": [
+          "29:",
+          "%30 = load i32, ptr @Cur_Vertical_Sep, align 4",
+          "%31 = icmp sge i32 %30, 300",
+          "br i1 %31, label %32, label %36"
+        ],
+        "successors": [
+          "32",
+          "36"
+        ],
+        "predecessors": [
+          "26"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "32",
+        "instructions": [
+          "32:",
+          "%33 = load i32, ptr @Up_Separation, align 4",
+          "%34 = call i32 @ALIM()",
+          "%35 = icmp sge i32 %33, %34",
+          "br label %36"
+        ],
+        "successors": [
+          "36"
+        ],
+        "predecessors": [
+          "29"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "36",
+        "instructions": [
+          "36:",
+          "%37 = phi i1 [ false, %29 ], [ false, %26 ], [ %35, %32 ]",
+          "%38 = zext i1 %37 to i32",
+          "store i32 %38, ptr %3, align 4",
+          "br label %39"
+        ],
+        "successors": [
+          "39"
+        ],
+        "predecessors": [
+          "26",
+          "29",
+          "32"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "39",
+        "instructions": [
+          "39:",
+          "%40 = load i32, ptr %3, align 4",
+          "ret i32 %40"
+        ],
+        "successors": [],
+        "predecessors": [
+          "23",
+          "36"
+        ],
+        "is_entry": false,
+        "is_exit": true
+      }
+    ],
+    "edges": [
+      {
+        "from": "0",
+        "to": "10"
+      },
+      {
+        "from": "0",
+        "to": "26"
+      },
+      {
+        "from": "10",
+        "to": "13"
+      },
+      {
+        "from": "10",
+        "to": "23"
+      },
+      {
+        "from": "13",
+        "to": "16"
+      },
+      {
+        "from": "13",
+        "to": "21"
+      },
+      {
+        "from": "16",
+        "to": "21"
+      },
+      {
+        "from": "21",
+        "to": "23"
+      },
+      {
+        "from": "23",
+        "to": "39"
+      },
+      {
+        "from": "26",
+        "to": "29"
+      },
+      {
+        "from": "26",
+        "to": "36"
+      },
+      {
+        "from": "29",
+        "to": "32"
+      },
+      {
+        "from": "29",
+        "to": "36"
+      },
+      {
+        "from": "32",
+        "to": "36"
+      },
+      {
+        "from": "36",
+        "to": "39"
+      }
+    ]
+  },
+  "Non_Crossing_Biased_Descend": {
+    "function": "Non_Crossing_Biased_Descend",
+    "num_blocks": 11,
+    "num_edges": 15,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "%1 = alloca i32, align 4",
+          "%2 = alloca i32, align 4",
+          "%3 = alloca i32, align 4",
+          "%4 = call i32 @Inhibit_Biased_Climb()",
+          "%5 = load i32, ptr @Down_Separation, align 4",
+          "%6 = icmp sgt i32 %4, %5",
+          "%7 = zext i1 %6 to i32",
+          "store i32 %7, ptr %1, align 4",
+          "%8 = load i32, ptr %1, align 4",
+          "%9 = icmp ne i32 %8, 0",
+          "br i1 %9, label %10, label %23"
+        ],
+        "successors": [
+          "10",
+          "23"
+        ],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": false
+      },
+      {
+        "block": "10",
+        "instructions": [
+          "10:",
+          "%11 = call i32 @Own_Below_Threat()",
+          "%12 = icmp ne i32 %11, 0",
+          "br i1 %12, label %13, label %20"
+        ],
+        "successors": [
+          "13",
+          "20"
+        ],
+        "predecessors": [
+          "0"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "13",
+        "instructions": [
+          "13:",
+          "%14 = load i32, ptr @Cur_Vertical_Sep, align 4",
+          "%15 = icmp sge i32 %14, 300",
+          "br i1 %15, label %16, label %20"
+        ],
+        "successors": [
+          "16",
+          "20"
+        ],
+        "predecessors": [
+          "10"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "16",
+        "instructions": [
+          "16:",
+          "%17 = load i32, ptr @Down_Separation, align 4",
+          "%18 = call i32 @ALIM()",
+          "%19 = icmp sge i32 %17, %18",
+          "br label %20"
+        ],
+        "successors": [
+          "20"
+        ],
+        "predecessors": [
+          "13"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "20",
+        "instructions": [
+          "20:",
+          "%21 = phi i1 [ false, %13 ], [ false, %10 ], [ %19, %16 ]",
+          "%22 = zext i1 %21 to i32",
+          "store i32 %22, ptr %3, align 4",
+          "br label %38"
+        ],
+        "successors": [
+          "38"
+        ],
+        "predecessors": [
+          "10",
+          "13",
+          "16"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "23",
+        "instructions": [
+          "23:",
+          "%24 = call i32 @Own_Above_Threat()",
+          "%25 = icmp ne i32 %24, 0",
+          "br i1 %25, label %26, label %35"
+        ],
+        "successors": [
+          "26",
+          "35"
+        ],
+        "predecessors": [
+          "0"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "26",
+        "instructions": [
+          "26:",
+          "%27 = call i32 @Own_Above_Threat()",
+          "%28 = icmp ne i32 %27, 0",
+          "br i1 %28, label %29, label %33"
+        ],
+        "successors": [
+          "29",
+          "33"
+        ],
+        "predecessors": [
+          "23"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "29",
+        "instructions": [
+          "29:",
+          "%30 = load i32, ptr @Up_Separation, align 4",
+          "%31 = call i32 @ALIM()",
+          "%32 = icmp sge i32 %30, %31",
+          "br label %33"
+        ],
+        "successors": [
+          "33"
+        ],
+        "predecessors": [
+          "26"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "33",
+        "instructions": [
+          "33:",
+          "%34 = phi i1 [ false, %26 ], [ %32, %29 ]",
+          "br label %35"
+        ],
+        "successors": [
+          "35"
+        ],
+        "predecessors": [
+          "26",
+          "29"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "35",
+        "instructions": [
+          "35:",
+          "%36 = phi i1 [ true, %23 ], [ %34, %33 ]",
+          "%37 = zext i1 %36 to i32",
+          "store i32 %37, ptr %3, align 4",
+          "br label %38"
+        ],
+        "successors": [
+          "38"
+        ],
+        "predecessors": [
+          "23",
+          "33"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "38",
+        "instructions": [
+          "38:",
+          "%39 = load i32, ptr %3, align 4",
+          "ret i32 %39"
+        ],
+        "successors": [],
+        "predecessors": [
+          "20",
+          "35"
+        ],
+        "is_entry": false,
+        "is_exit": true
+      }
+    ],
+    "edges": [
+      {
+        "from": "0",
+        "to": "10"
+      },
+      {
+        "from": "0",
+        "to": "23"
+      },
+      {
+        "from": "10",
+        "to": "13"
+      },
+      {
+        "from": "10",
+        "to": "20"
+      },
+      {
+        "from": "13",
+        "to": "16"
+      },
+      {
+        "from": "13",
+        "to": "20"
+      },
+      {
+        "from": "16",
+        "to": "20"
+      },
+      {
+        "from": "20",
+        "to": "38"
+      },
+      {
+        "from": "23",
+        "to": "26"
+      },
+      {
+        "from": "23",
+        "to": "35"
+      },
+      {
+        "from": "26",
+        "to": "29"
+      },
+      {
+        "from": "26",
+        "to": "33"
+      },
+      {
+        "from": "29",
+        "to": "33"
+      },
+      {
+        "from": "33",
+        "to": "35"
+      },
+      {
+        "from": "35",
+        "to": "38"
+      }
+    ]
+  },
+  "Own_Below_Threat": {
+    "function": "Own_Below_Threat",
+    "num_blocks": 1,
+    "num_edges": 0,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "%1 = load i32, ptr @Own_Tracked_Alt, align 4",
+          "%2 = load i32, ptr @Other_Tracked_Alt, align 4",
+          "%3 = icmp slt i32 %1, %2",
+          "%4 = zext i1 %3 to i32",
+          "ret i32 %4"
+        ],
+        "successors": [],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": true
+      }
+    ],
+    "edges": []
+  },
+  "Own_Above_Threat": {
+    "function": "Own_Above_Threat",
+    "num_blocks": 1,
+    "num_edges": 0,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "%1 = load i32, ptr @Other_Tracked_Alt, align 4",
+          "%2 = load i32, ptr @Own_Tracked_Alt, align 4",
+          "%3 = icmp slt i32 %1, %2",
+          "%4 = zext i1 %3 to i32",
+          "ret i32 %4"
+        ],
+        "successors": [],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": true
+      }
+    ],
+    "edges": []
+  },
+  "alt_sep_test": {
+    "function": "alt_sep_test",
+    "num_blocks": 25,
+    "num_edges": 37,
+    "nodes": [
+      {
+        "block": "0",
+        "instructions": [
+          "0:",
+          "%1 = alloca i32, align 4",
+          "%2 = alloca i32, align 4",
+          "%3 = alloca i32, align 4",
+          "%4 = alloca i32, align 4",
+          "%5 = alloca i32, align 4",
+          "%6 = alloca i32, align 4",
+          "%7 = load i32, ptr @High_Confidence, align 4",
+          "%8 = icmp ne i32 %7, 0",
+          "br i1 %8, label %9, label %15"
+        ],
+        "successors": [
+          "9",
+          "15"
+        ],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": false
+      },
+      {
+        "block": "9",
+        "instructions": [
+          "9:",
+          "%10 = load i32, ptr @Own_Tracked_Alt_Rate, align 4",
+          "%11 = icmp sle i32 %10, 600",
+          "br i1 %11, label %12, label %15"
+        ],
+        "successors": [
+          "12",
+          "15"
+        ],
+        "predecessors": [
+          "0"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "12",
+        "instructions": [
+          "12:",
+          "%13 = load i32, ptr @Cur_Vertical_Sep, align 4",
+          "%14 = icmp sgt i32 %13, 600",
+          "br label %15"
+        ],
+        "successors": [
+          "15"
+        ],
+        "predecessors": [
+          "9"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "15",
+        "instructions": [
+          "15:",
+          "%16 = phi i1 [ false, %9 ], [ false, %0 ], [ %14, %12 ]",
+          "%17 = zext i1 %16 to i32",
+          "store i32 %17, ptr %1, align 4",
+          "%18 = load i32, ptr @Other_Capability, align 4",
+          "%19 = icmp eq i32 %18, 1",
+          "%20 = zext i1 %19 to i32",
+          "store i32 %20, ptr %2, align 4",
+          "%21 = load i32, ptr @Two_of_Three_Reports_Valid, align 4",
+          "%22 = icmp ne i32 %21, 0",
+          "br i1 %22, label %23, label %26"
+        ],
+        "successors": [
+          "23",
+          "26"
+        ],
+        "predecessors": [
+          "0",
+          "9",
+          "12"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "23",
+        "instructions": [
+          "23:",
+          "%24 = load i32, ptr @Other_RAC, align 4",
+          "%25 = icmp eq i32 %24, 0",
+          "br label %26"
+        ],
+        "successors": [
+          "26"
+        ],
+        "predecessors": [
+          "15"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "26",
+        "instructions": [
+          "26:",
+          "%27 = phi i1 [ false, %15 ], [ %25, %23 ]",
+          "%28 = zext i1 %27 to i32",
+          "store i32 %28, ptr %3, align 4",
+          "store i32 0, ptr %6, align 4",
+          "%29 = load i32, ptr %1, align 4",
+          "%30 = icmp ne i32 %29, 0",
+          "br i1 %30, label %31, label %75"
+        ],
+        "successors": [
+          "31",
+          "75"
+        ],
+        "predecessors": [
+          "15",
+          "23"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "31",
+        "instructions": [
+          "31:",
+          "%32 = load i32, ptr %2, align 4",
+          "%33 = icmp ne i32 %32, 0",
+          "br i1 %33, label %34, label %37"
+        ],
+        "successors": [
+          "34",
+          "37"
+        ],
+        "predecessors": [
+          "26"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "34",
+        "instructions": [
+          "34:",
+          "%35 = load i32, ptr %3, align 4",
+          "%36 = icmp ne i32 %35, 0",
+          "br i1 %36, label %40, label %37"
+        ],
+        "successors": [
+          "40",
+          "37"
+        ],
+        "predecessors": [
+          "31"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "37",
+        "instructions": [
+          "37:",
+          "%38 = load i32, ptr %2, align 4",
+          "%39 = icmp ne i32 %38, 0",
+          "br i1 %39, label %75, label %40"
+        ],
+        "successors": [
+          "75",
+          "40"
+        ],
+        "predecessors": [
+          "31",
+          "34"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "40",
+        "instructions": [
+          "40:",
+          "%41 = call i32 @Non_Crossing_Biased_Climb()",
+          "%42 = icmp ne i32 %41, 0",
+          "br i1 %42, label %43, label %46"
+        ],
+        "successors": [
+          "43",
+          "46"
+        ],
+        "predecessors": [
+          "34",
+          "37"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "43",
+        "instructions": [
+          "43:",
+          "%44 = call i32 @Own_Below_Threat()",
+          "%45 = icmp ne i32 %44, 0",
+          "br label %46"
+        ],
+        "successors": [
+          "46"
+        ],
+        "predecessors": [
+          "40"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "46",
+        "instructions": [
+          "46:",
+          "%47 = phi i1 [ false, %40 ], [ %45, %43 ]",
+          "%48 = zext i1 %47 to i32",
+          "store i32 %48, ptr %4, align 4",
+          "%49 = call i32 @Non_Crossing_Biased_Descend()",
+          "%50 = icmp ne i32 %49, 0",
+          "br i1 %50, label %51, label %54"
+        ],
+        "successors": [
+          "51",
+          "54"
+        ],
+        "predecessors": [
+          "40",
+          "43"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "51",
+        "instructions": [
+          "51:",
+          "%52 = call i32 @Own_Above_Threat()",
+          "%53 = icmp ne i32 %52, 0",
+          "br label %54"
+        ],
+        "successors": [
+          "54"
+        ],
+        "predecessors": [
+          "46"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "54",
+        "instructions": [
+          "54:",
+          "%55 = phi i1 [ false, %46 ], [ %53, %51 ]",
+          "%56 = zext i1 %55 to i32",
+          "store i32 %56, ptr %5, align 4",
+          "%57 = load i32, ptr %4, align 4",
+          "%58 = icmp ne i32 %57, 0",
+          "br i1 %58, label %59, label %63"
+        ],
+        "successors": [
+          "59",
+          "63"
+        ],
+        "predecessors": [
+          "46",
+          "51"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "59",
+        "instructions": [
+          "59:",
+          "%60 = load i32, ptr %5, align 4",
+          "%61 = icmp ne i32 %60, 0",
+          "br i1 %61, label %62, label %63"
+        ],
+        "successors": [
+          "62",
+          "63"
+        ],
+        "predecessors": [
+          "54"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "62",
+        "instructions": [
+          "62:",
+          "store i32 0, ptr %6, align 4",
+          "br label %74"
+        ],
+        "successors": [
+          "74"
+        ],
+        "predecessors": [
+          "59"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "63",
+        "instructions": [
+          "63:",
+          "%64 = load i32, ptr %4, align 4",
+          "%65 = icmp ne i32 %64, 0",
+          "br i1 %65, label %66, label %67"
+        ],
+        "successors": [
+          "66",
+          "67"
+        ],
+        "predecessors": [
+          "54",
+          "59"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "66",
+        "instructions": [
+          "66:",
+          "store i32 1, ptr %6, align 4",
+          "br label %73"
+        ],
+        "successors": [
+          "73"
+        ],
+        "predecessors": [
+          "63"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "67",
+        "instructions": [
+          "67:",
+          "%68 = load i32, ptr %5, align 4",
+          "%69 = icmp ne i32 %68, 0",
+          "br i1 %69, label %70, label %71"
+        ],
+        "successors": [
+          "70",
+          "71"
+        ],
+        "predecessors": [
+          "63"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "70",
+        "instructions": [
+          "70:",
+          "store i32 2, ptr %6, align 4",
+          "br label %72"
+        ],
+        "successors": [
+          "72"
+        ],
+        "predecessors": [
+          "67"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "71",
+        "instructions": [
+          "71:",
+          "store i32 0, ptr %6, align 4",
+          "br label %72"
+        ],
+        "successors": [
+          "72"
+        ],
+        "predecessors": [
+          "67"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "72",
+        "instructions": [
+          "72:",
+          "br label %73"
+        ],
+        "successors": [
+          "73"
+        ],
+        "predecessors": [
+          "70",
+          "71"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "73",
+        "instructions": [
+          "73:",
+          "br label %74"
+        ],
+        "successors": [
+          "74"
+        ],
+        "predecessors": [
+          "66",
+          "72"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "74",
+        "instructions": [
+          "74:",
+          "br label %75"
+        ],
+        "successors": [
+          "75"
+        ],
+        "predecessors": [
+          "62",
+          "73"
+        ],
+        "is_entry": false,
+        "is_exit": false
+      },
+      {
+        "block": "75",
+        "instructions": [
+          "75:",
+          "%76 = load i32, ptr %6, align 4",
+          "ret i32 %76"
+        ],
+        "successors": [],
+        "predecessors": [
+          "26",
+          "37",
+          "74"
+        ],
+        "is_entry": false,
+        "is_exit": true
+      }
+    ],
+    "edges": [
+      {
+        "from": "0",
+        "to": "9"
+      },
+      {
+        "from": "0",
+        "to": "15"
+      },
+      {
+        "from": "9",
+        "to": "12"
+      },
+      {
+        "from": "9",
+        "to": "15"
+      },
+      {
+        "from": "12",
+        "to": "15"
+      },
+      {
+        "from": "15",
+        "to": "23"
+      },
+      {
+        "from": "15",
+        "to": "26"
+      },
+      {
+        "from": "23",
+        "to": "26"
+      },
+      {
+        "from": "26",
+        "to": "31"
+      },
+      {
+        "from": "26",
+        "to": "75"
+      },
+      {
+        "from": "31",
+        "to": "34"
+      },
+      {
+        "from": "31",
+        "to": "37"
+      },
+      {
+        "from": "34",
+        "to": "40"
+      },
+      {
+        "from": "34",
+        "to": "37"
+      },
+      {
+        "from": "37",
+        "to": "75"
+      },
+      {
+        "from": "37",
+        "to": "40"
+      },
+      {
+        "from": "40",
+        "to": "43"
+      },
+      {
+        "from": "40",
+        "to": "46"
+      },
+      {
+        "from": "43",
+        "to": "46"
+      },
+      {
+        "from": "46",
+        "to": "51"
+      },
+      {
+        "from": "46",
+        "to": "54"
+      },
+      {
+        "from": "51",
+        "to": "54"
+      },
+      {
+        "from": "54",
+        "to": "59"
+      },
+      {
+        "from": "54",
+        "to": "63"
+      },
+      {
+        "from": "59",
+        "to": "62"
+      },
+      {
+        "from": "59",
+        "to": "63"
+      },
+      {
+        "from": "62",
+        "to": "74"
+      },
+      {
+        "from": "63",
+        "to": "66"
+      },
+      {
+        "from": "63",
+        "to": "67"
+      },
+      {
+        "from": "66",
+        "to": "73"
+      },
+      {
+        "from": "67",
+        "to": "70"
+      },
+      {
+        "from": "67",
+        "to": "71"
+      },
+      {
+        "from": "70",
+        "to": "72"
+      },
+      {
+        "from": "71",
+        "to": "72"
+      },
+      {
+        "from": "72",
+        "to": "73"
+      },
+      {
+        "from": "73",
+        "to": "74"
+      },
+      {
+        "from": "74",
+        "to": "75"
+      }
+    ]
+  },
+  "main": {
+    "function": "main",
+    "num_blocks": 3,
+    "num_edges": 2,
+    "nodes": [
+      {
+        "block": "2",
+        "instructions": [
+          "2:",
+          "%3 = alloca i32, align 4",
+          "%4 = alloca i32, align 4",
+          "%5 = alloca ptr, align 8",
+          "store i32 0, ptr %3, align 4",
+          "store i32 %0, ptr %4, align 4",
+          "store ptr %1, ptr %5, align 8",
+          "%6 = load i32, ptr %4, align 4",
+          "%7 = icmp slt i32 %6, 13",
+          "br i1 %7, label %8, label %19"
+        ],
+        "successors": [
+          "8",
+          "19"
+        ],
+        "predecessors": [],
+        "is_entry": true,
+        "is_exit": false
+      },
+      {
+        "block": "8",
+        "instructions": [
+          "8:",
+          "%9 = load ptr, ptr @__stdoutp, align 8",
+          "%10 = call i32 (ptr, ptr, ...) @fprintf(ptr noundef %9, ptr noundef @.str) #4",
+          "%11 = load ptr, ptr @__stdoutp, align 8",
+          "%12 = call i32 (ptr, ptr, ...) @fprintf(ptr noundef %11, ptr noundef",
+          "... @.str.1) #4",
+          "%13 = load ptr, ptr @__stdoutp, align 8",
+          "%14 = call i32 (ptr, ptr, ...) @fprintf(ptr noundef %13, ptr noundef",
+          "... @.str.2) #4",
+          "%15 = load ptr, ptr @__stdoutp, align 8",
+          "%16 = call i32 (ptr, ptr, ...) @fprintf(ptr noundef %15, ptr noundef",
+          "... @.str.3) #4",
+          "%17 = load ptr, ptr @__stdoutp, align 8",
+          "%18 = call i32 (ptr, ptr, ...) @fprintf(ptr noundef %17, ptr noundef",
+          "... @.str.4) #4",
+          "call void @exit(i32 noundef 1) #5",
+          "unreachable"
+        ],
+        "successors": [],
+        "predecessors": [
+          "2"
+        ],
+        "is_entry": false,
+        "is_exit": true
+      },
+      {
+        "block": "19",
+        "instructions": [
+          "19:",
+          "call void @initialize()",
+          "%20 = load ptr, ptr %5, align 8",
+          "%21 = getelementptr inbounds ptr, ptr %20, i64 1",
+          "%22 = load ptr, ptr %21, align 8",
+          "%23 = call i32 @atoi(ptr noundef %22)",
+          "store i32 %23, ptr @Cur_Vertical_Sep, align 4",
+          "%24 = load ptr, ptr %5, align 8",
+          "%25 = getelementptr inbounds ptr, ptr %24, i64 2",
+          "%26 = load ptr, ptr %25, align 8",
+          "%27 = call i32 @atoi(ptr noundef %26)",
+          "store i32 %27, ptr @High_Confidence, align 4",
+          "%28 = load ptr, ptr %5, align 8",
+          "%29 = getelementptr inbounds ptr, ptr %28, i64 3",
+          "%30 = load ptr, ptr %29, align 8",
+          "%31 = call i32 @atoi(ptr noundef %30)",
+          "store i32 %31, ptr @Two_of_Three_Reports_Valid, align 4",
+          "%32 = load ptr, ptr %5, align 8",
+          "%33 = getelementptr inbounds ptr, ptr %32, i64 4",
+          "%34 = load ptr, ptr %33, align 8",
+          "%35 = call i32 @atoi(ptr noundef %34)",
+          "store i32 %35, ptr @Own_Tracked_Alt, align 4",
+          "%36 = load ptr, ptr %5, align 8",
+          "%37 = getelementptr inbounds ptr, ptr %36, i64 5",
+          "%38 = load ptr, ptr %37, align 8",
+          "%39 = call i32 @atoi(ptr noundef %38)",
+          "store i32 %39, ptr @Own_Tracked_Alt_Rate, align 4",
+          "%40 = load ptr, ptr %5, align 8",
+          "%41 = getelementptr inbounds ptr, ptr %40, i64 6",
+          "%42 = load ptr, ptr %41, align 8",
+          "%43 = call i32 @atoi(ptr noundef %42)",
+          "store i32 %43, ptr @Other_Tracked_Alt, align 4",
+          "%44 = load ptr, ptr %5, align 8",
+          "%45 = getelementptr inbounds ptr, ptr %44, i64 7",
+          "%46 = load ptr, ptr %45, align 8",
+          "%47 = call i32 @atoi(ptr noundef %46)",
+          "store i32 %47, ptr @Alt_Layer_Value, align 4",
+          "%48 = load ptr, ptr %5, align 8",
+          "%49 = getelementptr inbounds ptr, ptr %48, i64 8",
+          "%50 = load ptr, ptr %49, align 8",
+          "%51 = call i32 @atoi(ptr noundef %50)",
+          "store i32 %51, ptr @Up_Separation, align 4",
+          "%52 = load ptr, ptr %5, align 8",
+          "%53 = getelementptr inbounds ptr, ptr %52, i64 9",
+          "%54 = load ptr, ptr %53, align 8",
+          "%55 = call i32 @atoi(ptr noundef %54)",
+          "store i32 %55, ptr @Down_Separation, align 4",
+          "%56 = load ptr, ptr %5, align 8",
+          "%57 = getelementptr inbounds ptr, ptr %56, i64 10",
+          "%58 = load ptr, ptr %57, align 8",
+          "%59 = call i32 @atoi(ptr noundef %58)",
+          "store i32 %59, ptr @Other_RAC, align 4",
+          "%60 = load ptr, ptr %5, align 8",
+          "%61 = getelementptr inbounds ptr, ptr %60, i64 11",
+          "%62 = load ptr, ptr %61, align 8",
+          "%63 = call i32 @atoi(ptr noundef %62)",
+          "store i32 %63, ptr @Other_Capability, align 4",
+          "%64 = load ptr, ptr %5, align 8",
+          "%65 = getelementptr inbounds ptr, ptr %64, i64 12",
+          "%66 = load ptr, ptr %65, align 8",
+          "%67 = call i32 @atoi(ptr noundef %66)",
+          "store i32 %67, ptr @Climb_Inhibit, align 4",
+          "%68 = load ptr, ptr @__stdoutp, align 8",
+          "%69 = call i32 @alt_sep_test()",
+          "%70 = call i32 (ptr, ptr, ...) @fprintf(ptr noundef %68, ptr noundef",
+          "... @.str.5, i32 noundef %69) #4",
+          "call void @exit(i32 noundef 0) #5",
+          "unreachable"
+        ],
+        "successors": [],
+        "predecessors": [
+          "2"
+        ],
+        "is_entry": false,
+        "is_exit": true
+      }
+    ],
+    "edges": [
+      {
+        "from": "2",
+        "to": "8"
+      },
+      {
+        "from": "2",
+        "to": "19"
+      }
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "ALIM": {
+    "callees": [],
+    "callers": [
+      "Non_Crossing_Biased_Climb",
+      "Non_Crossing_Biased_Descend"
+    ],
+    "call_site_count": 5,
+    "is_entry": false,
+    "is_leaf": true,
+    "calls_external": false
+  },
+  "Inhibit_Biased_Climb": {
+    "callees": [],
+    "callers": [
+      "Non_Crossing_Biased_Climb",
+      "Non_Crossing_Biased_Descend"
+    ],
+    "call_site_count": 3,
+    "is_entry": false,
+    "is_leaf": true,
+    "calls_external": false
+  },
+  "Non_Crossing_Biased_Climb": {
+    "callees": [
+      "ALIM",
+      "Inhibit_Biased_Climb",
+      "Own_Above_Threat",
+      "Own_Below_Threat"
+    ],
+    "callers": [
+      "alt_sep_test"
+    ],
+    "call_site_count": 2,
+    "is_entry": false,
+    "is_leaf": false,
+    "calls_external": false
+  },
+  "Non_Crossing_Biased_Descend": {
+    "callees": [
+      "ALIM",
+      "Inhibit_Biased_Climb",
+      "Own_Above_Threat",
+      "Own_Below_Threat"
+    ],
+    "callers": [
+      "alt_sep_test"
+    ],
+    "call_site_count": 2,
+    "is_entry": false,
+    "is_leaf": false,
+    "calls_external": false
+  },
+  "Own_Above_Threat": {
+    "callees": [],
+    "callers": [
+      "Non_Crossing_Biased_Climb",
+      "Non_Crossing_Biased_Descend",
+      "alt_sep_test"
+    ],
+    "call_site_count": 5,
+    "is_entry": false,
+    "is_leaf": true,
+    "calls_external": false
+  },
+  "Own_Below_Threat": {
+    "callees": [],
+    "callers": [
+      "Non_Crossing_Biased_Climb",
+      "Non_Crossing_Biased_Descend",
+      "alt_sep_test"
+    ],
+    "call_site_count": 5,
+    "is_entry": false,
+    "is_leaf": true,
+    "calls_external": false
+  },
+  "alt_sep_test": {
+    "callees": [
+      "Non_Crossing_Biased_Climb",
+      "Non_Crossing_Biased_Descend",
+      "Own_Above_Threat",
+      "Own_Below_Threat"
+    ],
+    "callers": [
+      "main"
+    ],
+    "call_site_count": 2,
+    "is_entry": false,
+    "is_leaf": false,
+    "calls_external": false
+  },
+  "initialize": {
+    "callees": [],
+    "callers": [
+      "main"
+    ],
+    "call_site_count": 2,
+    "is_entry": false,
+    "is_leaf": true,
+    "calls_external": false
+  },
+  "main": {
+    "callees": [
+      "alt_sep_test",
+      "exit",
+      "fprintf",
+      "initialize"
+    ],
+    "callers": [],
+    "call_site_count": 1,
+    "is_entry": true,
+    "is_leaf": false,
+    "calls_external": true
+  }
+}

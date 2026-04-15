@@ -1,0 +1,10 @@
+{
+  "tool": "AFL++",
+  "target": "tcas",
+  "seed_count": 6,
+  "run_duration_minutes": 10,
+  "queue_inputs": 14,
+  "unique_crashes": 4,
+  "unique_hangs": 0,
+  "notes": "AFL++ was run on a stdin-based wrapper for tcas. The fuzzer expanded the initial seed set and discovered crash inputs that should be checked for reproducibility."
+}

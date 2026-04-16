@@ -1,0 +1,12 @@
+digraph "CFG for 'Inhibit_Biased_Climb' function" {
+	label="CFG for 'Inhibit_Biased_Climb' function";
+
+	Node0x1055fea60 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870", fontname="Courier",label="{0:\l|  %1 = load i32, ptr @Climb_Inhibit, align 4\l  %2 = icmp ne i32 %1, 0\l  br i1 %2, label %3, label %6\l|{<s0>T|<s1>F}}"];
+	Node0x1055fea60:s0 -> Node0x1055fee60;
+	Node0x1055fea60:s1 -> Node0x1055feeb0;
+	Node0x1055fee60 [shape=record,color="#b70d28ff", style=filled, fillcolor="#bb1b2c70", fontname="Courier",label="{3:\l|  %4 = load i32, ptr @Up_Separation, align 4\l  %5 = add nsw i32 %4, 100\l  br label %8\l}"];
+	Node0x1055fee60 -> Node0x1055fef00;
+	Node0x1055feeb0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#c32e3170", fontname="Courier",label="{6:\l|  %7 = load i32, ptr @Up_Separation, align 4\l  br label %8\l}"];
+	Node0x1055feeb0 -> Node0x1055fef00;
+	Node0x1055fef00 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870", fontname="Courier",label="{8:\l|  %9 = phi i32 [ %5, %3 ], [ %7, %6 ]\l  ret i32 %9\l}"];
+}

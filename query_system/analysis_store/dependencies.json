@@ -47,19 +47,19 @@
     },
     "need_upward_RA": {
       "depends_on_globals": [
-        "High_Confidence",
-        "Own_Tracked_Alt_Rate",
         "Cur_Vertical_Sep",
-        "Other_Capability",
+        "High_Confidence",
         "Two_of_Three_Reports_Valid",
-        "Other_RAC",
-        "Climb_Inhibit",
-        "Up_Separation",
-        "Down_Separation",
         "Own_Tracked_Alt",
+        "Own_Tracked_Alt_Rate",
         "Other_Tracked_Alt",
         "Alt_Layer_Value",
-        "Positive_RA_Alt_Thresh"
+        "Positive_RA_Alt_Thresh",
+        "Up_Separation",
+        "Down_Separation",
+        "Other_RAC",
+        "Other_Capability",
+        "Climb_Inhibit"
       ],
       "depends_on_functions": [
         "Non_Crossing_Biased_Climb",
@@ -68,19 +68,19 @@
     },
     "need_downward_RA": {
       "depends_on_globals": [
-        "High_Confidence",
-        "Own_Tracked_Alt_Rate",
         "Cur_Vertical_Sep",
-        "Other_Capability",
+        "High_Confidence",
         "Two_of_Three_Reports_Valid",
-        "Other_RAC",
-        "Climb_Inhibit",
-        "Up_Separation",
-        "Down_Separation",
         "Own_Tracked_Alt",
+        "Own_Tracked_Alt_Rate",
         "Other_Tracked_Alt",
         "Alt_Layer_Value",
-        "Positive_RA_Alt_Thresh"
+        "Positive_RA_Alt_Thresh",
+        "Up_Separation",
+        "Down_Separation",
+        "Other_RAC",
+        "Other_Capability",
+        "Climb_Inhibit"
       ],
       "depends_on_functions": [
         "Non_Crossing_Biased_Descend",
@@ -89,19 +89,19 @@
     },
     "alt_sep_output": {
       "depends_on_globals": [
-        "High_Confidence",
-        "Own_Tracked_Alt_Rate",
         "Cur_Vertical_Sep",
-        "Other_Capability",
+        "High_Confidence",
         "Two_of_Three_Reports_Valid",
-        "Other_RAC",
-        "Climb_Inhibit",
-        "Up_Separation",
-        "Down_Separation",
         "Own_Tracked_Alt",
+        "Own_Tracked_Alt_Rate",
         "Other_Tracked_Alt",
         "Alt_Layer_Value",
-        "Positive_RA_Alt_Thresh"
+        "Positive_RA_Alt_Thresh",
+        "Up_Separation",
+        "Down_Separation",
+        "Other_RAC",
+        "Other_Capability",
+        "Climb_Inhibit"
       ],
       "depends_on_functions": [
         "Non_Crossing_Biased_Climb",
@@ -109,7 +109,7 @@
         "Own_Below_Threat",
         "Own_Above_Threat"
       ],
-      "note": "Final program output. Depends on enabled, tcas_equipped, intent_not_known, need_upward_RA, need_downward_RA"
+      "note": "Final output. Transitively depends on all 13 global inputs."
     }
   },
   "function_dependencies": {
@@ -248,19 +248,19 @@
     },
     "alt_sep_test": {
       "reads_globals": [
-        "High_Confidence",
-        "Own_Tracked_Alt_Rate",
         "Cur_Vertical_Sep",
-        "Other_Capability",
+        "High_Confidence",
         "Two_of_Three_Reports_Valid",
-        "Other_RAC",
-        "Climb_Inhibit",
-        "Up_Separation",
-        "Down_Separation",
         "Own_Tracked_Alt",
+        "Own_Tracked_Alt_Rate",
         "Other_Tracked_Alt",
         "Alt_Layer_Value",
-        "Positive_RA_Alt_Thresh"
+        "Positive_RA_Alt_Thresh",
+        "Up_Separation",
+        "Down_Separation",
+        "Other_RAC",
+        "Other_Capability",
+        "Climb_Inhibit"
       ],
       "writes_globals": [],
       "calls": [
@@ -270,19 +270,19 @@
         "Own_Above_Threat"
       ],
       "return_depends_on_globals": [
-        "High_Confidence",
-        "Own_Tracked_Alt_Rate",
         "Cur_Vertical_Sep",
-        "Other_Capability",
+        "High_Confidence",
         "Two_of_Three_Reports_Valid",
-        "Other_RAC",
-        "Climb_Inhibit",
-        "Up_Separation",
-        "Down_Separation",
         "Own_Tracked_Alt",
+        "Own_Tracked_Alt_Rate",
         "Other_Tracked_Alt",
         "Alt_Layer_Value",
-        "Positive_RA_Alt_Thresh"
+        "Positive_RA_Alt_Thresh",
+        "Up_Separation",
+        "Down_Separation",
+        "Other_RAC",
+        "Other_Capability",
+        "Climb_Inhibit"
       ],
       "return_depends_on_functions": [
         "Non_Crossing_Biased_Climb",
@@ -578,14 +578,6 @@
         "alt_sep_test"
       ]
     },
-    "High_Confidence___Own_Tracked_Alt_Rate": {
-      "var_a": "High_Confidence",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
     "Cur_Vertical_Sep___High_Confidence": {
       "var_a": "Cur_Vertical_Sep",
       "var_b": "High_Confidence",
@@ -594,8 +586,32 @@
         "alt_sep_test"
       ]
     },
-    "High_Confidence___Other_Capability": {
-      "var_a": "High_Confidence",
+    "Cur_Vertical_Sep___Two_of_Three_Reports_Valid": {
+      "var_a": "Cur_Vertical_Sep",
+      "var_b": "Two_of_Three_Reports_Valid",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Cur_Vertical_Sep___Own_Tracked_Alt_Rate": {
+      "var_a": "Cur_Vertical_Sep",
+      "var_b": "Own_Tracked_Alt_Rate",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Cur_Vertical_Sep___Other_RAC": {
+      "var_a": "Cur_Vertical_Sep",
+      "var_b": "Other_RAC",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Cur_Vertical_Sep___Other_Capability": {
+      "var_a": "Cur_Vertical_Sep",
       "var_b": "Other_Capability",
       "dependent": true,
       "via_functions": [
@@ -610,41 +626,17 @@
         "alt_sep_test"
       ]
     },
-    "High_Confidence___Other_RAC": {
-      "var_a": "High_Confidence",
-      "var_b": "Other_RAC",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Climb_Inhibit___High_Confidence": {
-      "var_a": "Climb_Inhibit",
-      "var_b": "High_Confidence",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "High_Confidence___Up_Separation": {
-      "var_a": "High_Confidence",
-      "var_b": "Up_Separation",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Down_Separation___High_Confidence": {
-      "var_a": "Down_Separation",
-      "var_b": "High_Confidence",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
     "High_Confidence___Own_Tracked_Alt": {
       "var_a": "High_Confidence",
       "var_b": "Own_Tracked_Alt",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "High_Confidence___Own_Tracked_Alt_Rate": {
+      "var_a": "High_Confidence",
+      "var_b": "Own_Tracked_Alt_Rate",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
@@ -674,217 +666,41 @@
         "alt_sep_test"
       ]
     },
-    "Cur_Vertical_Sep___Own_Tracked_Alt_Rate": {
-      "var_a": "Cur_Vertical_Sep",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_Capability___Own_Tracked_Alt_Rate": {
-      "var_a": "Other_Capability",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Own_Tracked_Alt_Rate___Two_of_Three_Reports_Valid": {
-      "var_a": "Own_Tracked_Alt_Rate",
-      "var_b": "Two_of_Three_Reports_Valid",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_RAC___Own_Tracked_Alt_Rate": {
-      "var_a": "Other_RAC",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Climb_Inhibit___Own_Tracked_Alt_Rate": {
-      "var_a": "Climb_Inhibit",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Own_Tracked_Alt_Rate___Up_Separation": {
-      "var_a": "Own_Tracked_Alt_Rate",
+    "High_Confidence___Up_Separation": {
+      "var_a": "High_Confidence",
       "var_b": "Up_Separation",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
       ]
     },
-    "Down_Separation___Own_Tracked_Alt_Rate": {
+    "Down_Separation___High_Confidence": {
       "var_a": "Down_Separation",
-      "var_b": "Own_Tracked_Alt_Rate",
+      "var_b": "High_Confidence",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
       ]
     },
-    "Own_Tracked_Alt___Own_Tracked_Alt_Rate": {
-      "var_a": "Own_Tracked_Alt",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_Tracked_Alt___Own_Tracked_Alt_Rate": {
-      "var_a": "Other_Tracked_Alt",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Alt_Layer_Value___Own_Tracked_Alt_Rate": {
-      "var_a": "Alt_Layer_Value",
-      "var_b": "Own_Tracked_Alt_Rate",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Own_Tracked_Alt_Rate___Positive_RA_Alt_Thresh": {
-      "var_a": "Own_Tracked_Alt_Rate",
-      "var_b": "Positive_RA_Alt_Thresh",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Cur_Vertical_Sep___Other_Capability": {
-      "var_a": "Cur_Vertical_Sep",
-      "var_b": "Other_Capability",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Cur_Vertical_Sep___Two_of_Three_Reports_Valid": {
-      "var_a": "Cur_Vertical_Sep",
-      "var_b": "Two_of_Three_Reports_Valid",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Cur_Vertical_Sep___Other_RAC": {
-      "var_a": "Cur_Vertical_Sep",
+    "High_Confidence___Other_RAC": {
+      "var_a": "High_Confidence",
       "var_b": "Other_RAC",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
       ]
     },
-    "Other_Capability___Two_of_Three_Reports_Valid": {
-      "var_a": "Other_Capability",
-      "var_b": "Two_of_Three_Reports_Valid",
+    "High_Confidence___Other_Capability": {
+      "var_a": "High_Confidence",
+      "var_b": "Other_Capability",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
       ]
     },
-    "Other_Capability___Other_RAC": {
-      "var_a": "Other_Capability",
-      "var_b": "Other_RAC",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Climb_Inhibit___Other_Capability": {
+    "Climb_Inhibit___High_Confidence": {
       "var_a": "Climb_Inhibit",
-      "var_b": "Other_Capability",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_Capability___Up_Separation": {
-      "var_a": "Other_Capability",
-      "var_b": "Up_Separation",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Down_Separation___Other_Capability": {
-      "var_a": "Down_Separation",
-      "var_b": "Other_Capability",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_Capability___Own_Tracked_Alt": {
-      "var_a": "Other_Capability",
-      "var_b": "Own_Tracked_Alt",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_Capability___Other_Tracked_Alt": {
-      "var_a": "Other_Capability",
-      "var_b": "Other_Tracked_Alt",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Alt_Layer_Value___Other_Capability": {
-      "var_a": "Alt_Layer_Value",
-      "var_b": "Other_Capability",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_Capability___Positive_RA_Alt_Thresh": {
-      "var_a": "Other_Capability",
-      "var_b": "Positive_RA_Alt_Thresh",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_RAC___Two_of_Three_Reports_Valid": {
-      "var_a": "Other_RAC",
-      "var_b": "Two_of_Three_Reports_Valid",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Climb_Inhibit___Two_of_Three_Reports_Valid": {
-      "var_a": "Climb_Inhibit",
-      "var_b": "Two_of_Three_Reports_Valid",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Two_of_Three_Reports_Valid___Up_Separation": {
-      "var_a": "Two_of_Three_Reports_Valid",
-      "var_b": "Up_Separation",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Down_Separation___Two_of_Three_Reports_Valid": {
-      "var_a": "Down_Separation",
-      "var_b": "Two_of_Three_Reports_Valid",
+      "var_b": "High_Confidence",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
@@ -892,6 +708,14 @@
     },
     "Own_Tracked_Alt___Two_of_Three_Reports_Valid": {
       "var_a": "Own_Tracked_Alt",
+      "var_b": "Two_of_Three_Reports_Valid",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Own_Tracked_Alt_Rate___Two_of_Three_Reports_Valid": {
+      "var_a": "Own_Tracked_Alt_Rate",
       "var_b": "Two_of_Three_Reports_Valid",
       "dependent": true,
       "via_functions": [
@@ -922,25 +746,49 @@
         "alt_sep_test"
       ]
     },
-    "Climb_Inhibit___Other_RAC": {
-      "var_a": "Climb_Inhibit",
-      "var_b": "Other_RAC",
-      "dependent": true,
-      "via_functions": [
-        "alt_sep_test"
-      ]
-    },
-    "Other_RAC___Up_Separation": {
-      "var_a": "Other_RAC",
+    "Two_of_Three_Reports_Valid___Up_Separation": {
+      "var_a": "Two_of_Three_Reports_Valid",
       "var_b": "Up_Separation",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
       ]
     },
-    "Down_Separation___Other_RAC": {
+    "Down_Separation___Two_of_Three_Reports_Valid": {
       "var_a": "Down_Separation",
-      "var_b": "Other_RAC",
+      "var_b": "Two_of_Three_Reports_Valid",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_RAC___Two_of_Three_Reports_Valid": {
+      "var_a": "Other_RAC",
+      "var_b": "Two_of_Three_Reports_Valid",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_Capability___Two_of_Three_Reports_Valid": {
+      "var_a": "Other_Capability",
+      "var_b": "Two_of_Three_Reports_Valid",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Climb_Inhibit___Two_of_Three_Reports_Valid": {
+      "var_a": "Climb_Inhibit",
+      "var_b": "Two_of_Three_Reports_Valid",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Own_Tracked_Alt___Own_Tracked_Alt_Rate": {
+      "var_a": "Own_Tracked_Alt",
+      "var_b": "Own_Tracked_Alt_Rate",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"
@@ -954,8 +802,88 @@
         "alt_sep_test"
       ]
     },
+    "Other_Capability___Own_Tracked_Alt": {
+      "var_a": "Other_Capability",
+      "var_b": "Own_Tracked_Alt",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_Tracked_Alt___Own_Tracked_Alt_Rate": {
+      "var_a": "Other_Tracked_Alt",
+      "var_b": "Own_Tracked_Alt_Rate",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Alt_Layer_Value___Own_Tracked_Alt_Rate": {
+      "var_a": "Alt_Layer_Value",
+      "var_b": "Own_Tracked_Alt_Rate",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Own_Tracked_Alt_Rate___Positive_RA_Alt_Thresh": {
+      "var_a": "Own_Tracked_Alt_Rate",
+      "var_b": "Positive_RA_Alt_Thresh",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Own_Tracked_Alt_Rate___Up_Separation": {
+      "var_a": "Own_Tracked_Alt_Rate",
+      "var_b": "Up_Separation",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Down_Separation___Own_Tracked_Alt_Rate": {
+      "var_a": "Down_Separation",
+      "var_b": "Own_Tracked_Alt_Rate",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_RAC___Own_Tracked_Alt_Rate": {
+      "var_a": "Other_RAC",
+      "var_b": "Own_Tracked_Alt_Rate",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_Capability___Own_Tracked_Alt_Rate": {
+      "var_a": "Other_Capability",
+      "var_b": "Own_Tracked_Alt_Rate",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Climb_Inhibit___Own_Tracked_Alt_Rate": {
+      "var_a": "Climb_Inhibit",
+      "var_b": "Own_Tracked_Alt_Rate",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
     "Other_RAC___Other_Tracked_Alt": {
       "var_a": "Other_RAC",
+      "var_b": "Other_Tracked_Alt",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_Capability___Other_Tracked_Alt": {
+      "var_a": "Other_Capability",
       "var_b": "Other_Tracked_Alt",
       "dependent": true,
       "via_functions": [
@@ -970,9 +898,81 @@
         "alt_sep_test"
       ]
     },
+    "Alt_Layer_Value___Other_Capability": {
+      "var_a": "Alt_Layer_Value",
+      "var_b": "Other_Capability",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
     "Other_RAC___Positive_RA_Alt_Thresh": {
       "var_a": "Other_RAC",
       "var_b": "Positive_RA_Alt_Thresh",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_Capability___Positive_RA_Alt_Thresh": {
+      "var_a": "Other_Capability",
+      "var_b": "Positive_RA_Alt_Thresh",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_RAC___Up_Separation": {
+      "var_a": "Other_RAC",
+      "var_b": "Up_Separation",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_Capability___Up_Separation": {
+      "var_a": "Other_Capability",
+      "var_b": "Up_Separation",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Down_Separation___Other_RAC": {
+      "var_a": "Down_Separation",
+      "var_b": "Other_RAC",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Down_Separation___Other_Capability": {
+      "var_a": "Down_Separation",
+      "var_b": "Other_Capability",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Other_Capability___Other_RAC": {
+      "var_a": "Other_Capability",
+      "var_b": "Other_RAC",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Climb_Inhibit___Other_RAC": {
+      "var_a": "Climb_Inhibit",
+      "var_b": "Other_RAC",
+      "dependent": true,
+      "via_functions": [
+        "alt_sep_test"
+      ]
+    },
+    "Climb_Inhibit___Other_Capability": {
+      "var_a": "Climb_Inhibit",
+      "var_b": "Other_Capability",
       "dependent": true,
       "via_functions": [
         "alt_sep_test"

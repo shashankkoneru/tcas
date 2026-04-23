@@ -32,13 +32,14 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 STORE_DIR  = os.path.join(SCRIPT_DIR, "analysis_store")
 
 FILES = {
-    "call_graph":    os.path.join(STORE_DIR, "call_graph.json"),
-    "cfg":           os.path.join(STORE_DIR, "cfg.json"),
-    "dependencies":  os.path.join(STORE_DIR, "dependencies.json"),
-    "coverage":      os.path.join(STORE_DIR, "coverage_report.json"),
-    "test_results":  os.path.join(STORE_DIR, "test_results.json"),
-    "afl_summary":   os.path.join(STORE_DIR, "afl_summary.json"),
-    "afl_crashes":   os.path.join(STORE_DIR, "afl_crash_notes.txt"),
+    "call_graph":        os.path.join(STORE_DIR, "call_graph.json"),
+    "cfg":               os.path.join(STORE_DIR, "cfg.json"),
+    "dependencies":      os.path.join(STORE_DIR, "dependencies.json"),
+    "coverage":          os.path.join(STORE_DIR, "coverage_report.json"),
+    "test_results":      os.path.join(STORE_DIR, "test_results.json"),
+    "universe_summary":  os.path.join(STORE_DIR, "universe_summary.json"),
+    "afl_summary":       os.path.join(STORE_DIR, "afl_summary.json"),
+    "afl_crashes":       os.path.join(STORE_DIR, "afl_crash_notes.txt"),
 }
 
 # All known function names in tcas
@@ -133,9 +134,10 @@ def _source_line(key):
         "cfg":          "analysis_store/cfg.json",
         "dependencies": "analysis_store/dependencies.json",
         "coverage":     "analysis_store/coverage_report.json",
-        "test_results": "analysis_store/test_results.json",
-        "afl_summary":  "analysis_store/afl_summary.json",
-        "afl_crashes":  "analysis_store/afl_crash_notes.txt",
+        "test_results":     "analysis_store/test_results.json",
+        "universe_summary": "analysis_store/universe_summary.json",
+        "afl_summary":      "analysis_store/afl_summary.json",
+        "afl_crashes":      "analysis_store/afl_crash_notes.txt",
     }
     return labels.get(key, key)
 
@@ -548,6 +550,33 @@ def handle_test_cases_detail():
     _respond("\n".join(lines), source_keys=["test_results"])
 
 
+def handle_universe_summary():
+    """Show the universe test suite output distribution."""
+    data, path = _load("universe_summary")
+    if data is None:
+        _respond(
+            f"I couldn't find universe_summary.json at {path}. "
+            f"Run query_system/generate_universe_summary.py first to generate it."
+        )
+        return
+
+    total = data.get("total_inputs", 0)
+    dist  = data.get("output_distribution", {})
+    note  = data.get("note", "")
+
+    lines = [f"Universe suite: {total:,} inputs, no expected outputs.\n"]
+    lines.append("Observed output distribution:")
+    for label in ("UNRESOLVED", "UPWARD_RA", "DOWNWARD_RA"):
+        info = dist.get(label, {})
+        count   = info.get("count",   0)
+        percent = info.get("percent", 0.0)
+        lines.append(f"  {label:<15} {count:>5}  ({percent:.1f}%)")
+    if note:
+        lines.append(f"\nNote: {note}")
+
+    _respond("\n".join(lines), source_keys=["universe_summary"])
+
+
 # Fuzzing Queries 
 def handle_fuzzing_crashes():
     """Did fuzzing find any crashes?"""
@@ -619,7 +648,9 @@ def handle_help():
         "    'Show me the coverage summary'\n\n"
         "  TESTING\n"
         "    'How many tests passed?'\n"
-        "    'Show me the test case breakdown'\n\n"
+        "    'Show me the test case breakdown'\n"
+        "    'Show me the universe test distribution'\n"
+        "    'What is the output distribution for all inputs?'\n\n"
         "  FUZZING\n"
         "    'Did fuzzing find any crashes?'\n"
         "    'What did AFL discover?'\n\n"
@@ -676,6 +707,7 @@ def route(query):
         "cov_overview":  0,   # general coverage
         "test_results":  0,   # test pass/fail
         "test_detail":   0,   # test breakdown
+        "universe":      0,   # universe suite distribution
         "fuzz":          0,   # fuzzing
     }
 
@@ -721,6 +753,11 @@ def route(query):
         if kw in ql: scores["test_results"] += 3
     for kw in ("breakdown", "detail", "which test", "list test"):
         if kw in ql: scores["test_detail"] += 3
+
+    # Universe suite keywords
+    for kw in ("universe", "universe suite", "universe test", "1578", "1,578",
+               "output distribution", "distribution", "all inputs"):
+        if kw in ql: scores["universe"] += 4
 
     # Fuzzing keywords
     for kw in ("fuzz", "fuzzing", "afl", "crash", "crashes", "crashing", "hang",
@@ -817,6 +854,9 @@ def route(query):
 
     elif best_cat == "test_detail":
         handle_test_cases_detail()
+
+    elif best_cat == "universe":
+        handle_universe_summary()
 
     elif best_cat == "fuzz":
         handle_fuzzing_crashes()

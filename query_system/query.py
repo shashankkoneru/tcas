@@ -340,12 +340,23 @@ def handle_dependency_pair(var_a, var_b):
     var_a = normalize(var_a)
     var_b = normalize(var_b)
 
-    # Check variable_pairs first
-    key = "___".join(sorted([var_a, var_b]))
+    # Case-insensitive membership helper
+    def in_list(val, lst):
+        vl = val.lower()
+        return next((x for x in lst if x.lower() == vl), None)
+
+    # Check variable_pairs first (keys are sorted Title_Case names joined by ___)
     pairs = data.get("variable_pairs", {})
-    if key in pairs:
-        entry = pairs[key]
-        via = entry.get("via_functions", [])
+    matched_pair = None
+    for pair_key, entry in pairs.items():
+        parts = pair_key.split("___")
+        if len(parts) == 2:
+            pl = {p.lower() for p in parts}
+            if {var_a.lower(), var_b.lower()} == pl:
+                matched_pair = entry
+                break
+    if matched_pair:
+        via = matched_pair.get("via_functions", [])
         via_str = ", ".join(via) if via else "directly"
         msg = (f"'{var_a}' and '{var_b}' are data-dependent. "
                f"They share data flow through the following function(s): {via_str}. "
@@ -353,12 +364,39 @@ def handle_dependency_pair(var_a, var_b):
         _respond(msg, source_keys=["dependencies"])
         return
 
-    # Check if either appears in local_variable_dependencies
+    # Check local_variable_dependencies in two ways:
+    #   1. One var IS the local variable, the other is in its depends_on_globals
+    #   2. Both vars are globals that both feed the same local variable
     local_deps = data.get("local_variable_dependencies", {})
-    for local_var, info in local_deps.items():
-        deps_on = info.get("depends_on_globals", [])
-        if var_a in deps_on and var_b in deps_on:
-            msg = (f"'{var_a}' and '{var_b}' are both inputs that contribute to the "
+    local_map  = {k.lower(): (k, v) for k, v in local_deps.items()}
+    for local_key_l, (local_var, info) in local_map.items():
+        deps_on      = info.get("depends_on_globals", [])
+        deps_on_funcs = info.get("depends_on_functions", [])
+        all_deps     = deps_on + deps_on_funcs
+        a_is_local   = var_a.lower() == local_key_l
+        b_is_local   = var_b.lower() == local_key_l
+        a_in_deps    = bool(in_list(var_a, all_deps))
+        b_in_deps    = bool(in_list(var_b, all_deps))
+        if a_is_local and b_in_deps:
+            canon_b = in_list(var_b, all_deps)
+            msg = (f"Yes — '{local_var}' depends on '{canon_b}'. "
+                   f"'{canon_b}' is one of {len(deps_on)} global inputs that '{local_var}' "
+                   f"transitively depends on via "
+                   f"{', '.join(deps_on_funcs) or 'direct computation'}.")
+            _respond(msg, source_keys=["dependencies"])
+            return
+        if b_is_local and a_in_deps:
+            canon_a = in_list(var_a, all_deps)
+            msg = (f"Yes — '{local_var}' depends on '{canon_a}'. "
+                   f"'{canon_a}' is one of {len(deps_on)} global inputs that '{local_var}' "
+                   f"transitively depends on via "
+                   f"{', '.join(deps_on_funcs) or 'direct computation'}.")
+            _respond(msg, source_keys=["dependencies"])
+            return
+        if a_in_deps and b_in_deps:
+            canon_a = in_list(var_a, all_deps)
+            canon_b = in_list(var_b, all_deps)
+            msg = (f"'{canon_a}' and '{canon_b}' are both inputs that contribute to the "
                    f"computation of '{local_var}', so they are co-dependent in that context.")
             _respond(msg, source_keys=["dependencies"])
             return
@@ -368,7 +406,7 @@ def handle_dependency_pair(var_a, var_b):
     shared_funcs = []
     for fn, info in func_deps.items():
         rg = info.get("return_depends_on_globals", [])
-        if var_a in rg and var_b in rg:
+        if in_list(var_a, rg) and in_list(var_b, rg):
             shared_funcs.append(fn)
     if shared_funcs:
         msg = (f"'{var_a}' and '{var_b}' both influence the return value of: "
@@ -404,10 +442,13 @@ def handle_variable_deps(var_name):
         _respond(msg, source_keys=["dependencies"])
         return
 
-    # Check if it's a global — show which functions read it
+    # Check if it's a global — show which functions read it (case-insensitive)
     func_deps = data.get("function_dependencies", {})
-    readers = [fn for fn, info in func_deps.items() if canon in info.get("reads_globals", [])]
-    writers = [fn for fn, info in func_deps.items() if canon in info.get("writes_globals", [])]
+    cl = canon.lower()
+    readers = [fn for fn, info in func_deps.items()
+               if any(g.lower() == cl for g in info.get("reads_globals", []))]
+    writers = [fn for fn, info in func_deps.items()
+               if any(g.lower() == cl for g in info.get("writes_globals", []))]
 
     if readers or writers:
         msg = f"'{canon}' is a global variable in tcas."

@@ -6,6 +6,9 @@ COM S 4130 | Checkpoint 3
 Usage:
     python query.py                          # Default 
     python query.py "Where is ALIM called?"  # Direct query 
+    python query.py help                     # Show help 
+
+    python exit, python quit, Ctrl + C       # Exit program
 
     Answers questions based on .json files located within analysis_store/.   
     A user can ask question about:
@@ -25,7 +28,6 @@ import re
 import sys
 import textwrap
 
-# Configuration 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 STORE_DIR  = os.path.join(SCRIPT_DIR, "analysis_store")
 
@@ -46,7 +48,7 @@ KNOWN_FUNCTIONS = {
     "own_below_threat", "own_above_threat", "alt_sep_test", "main",
 }
 
-# All known global variable names 
+# All known global variable names (lowercase for matching)
 KNOWN_GLOBALS = {
     "cur_vertical_sep", "high_confidence", "two_of_three_reports_valid",
     "own_tracked_alt", "own_tracked_alt_rate", "other_tracked_alt",
@@ -127,13 +129,13 @@ def _find_vars_in_query(tokens):
 def _source_line(key):
     """Return a human-readable 'source file' line for citations."""
     labels = {
-        "call_graph":   "analysis_store/call_graph.json  (from CP1 static analysis)",
-        "cfg":          "analysis_store/cfg.json          (from CP1 LLVM CFG export)",
-        "dependencies": "analysis_store/dependencies.json (from CP1 dependency summary)",
-        "coverage":     "analysis_store/coverage_report.json (from CP2 gcov)",
-        "test_results": "analysis_store/test_results.json    (from CP2 hand-crafted suite)",
-        "afl_summary":  "analysis_store/afl_summary.json     (from CP2 AFL++ run)",
-        "afl_crashes":  "analysis_store/afl_crash_notes.txt  (from CP2 AFL++ crashes)",
+        "call_graph":   "analysis_store/call_graph.json",
+        "cfg":          "analysis_store/cfg.json",
+        "dependencies": "analysis_store/dependencies.json",
+        "coverage":     "analysis_store/coverage_report.json",
+        "test_results": "analysis_store/test_results.json",
+        "afl_summary":  "analysis_store/afl_summary.json",
+        "afl_crashes":  "analysis_store/afl_crash_notes.txt",
     }
     return labels.get(key, key)
 
@@ -154,14 +156,12 @@ def _respond(text, source_keys=None):
             print(_wrap(para.strip()))
     print()
     if source_keys:
-        print("📂 Data sourced from:")
+        print("Result(s) found in:")
         for k in source_keys:
             print(f"   {_source_line(k)}")
     print()
 
-
-# Query handlers 
-# Call graph queries
+# Call Graph queries
 def handle_callers(func_name):
     """Who calls <func>? / Where is <func> called?"""
     data, path = _load("call_graph")
@@ -237,7 +237,7 @@ def handle_call_graph_overview():
     _respond(msg, source_keys=["call_graph"])
 
 
-# CFG queries 
+# CFG Queries 
 def handle_cfg_blocks(func_name):
     """How many blocks does <func> have?"""
     data, path = _load("cfg")
@@ -322,7 +322,7 @@ def handle_cfg_overview(func_name):
     handle_cfg_blocks(func_name)
 
 
-# Dependency queries 
+# Dependency Queries 
 def handle_dependency_pair(var_a, var_b):
     """Are variables <a> and <b> dependent?"""
     data, path = _load("dependencies")
@@ -345,7 +345,7 @@ def handle_dependency_pair(var_a, var_b):
         entry = pairs[key]
         via = entry.get("via_functions", [])
         via_str = ", ".join(via) if via else "directly"
-        msg = (f"Yes — '{var_a}' and '{var_b}' are data-dependent. "
+        msg = (f"'{var_a}' and '{var_b}' are data-dependent. "
                f"They share data flow through the following function(s): {via_str}. "
                f"This means a change in one could affect paths that read the other.")
         _respond(msg, source_keys=["dependencies"])
@@ -445,7 +445,7 @@ def handle_dependency_overview():
     _respond(msg, source_keys=["dependencies"])
 
 
-# Coverage queries 
+# Coverage Queries 
 def handle_uncovered():
     """What lines/blocks are not covered?"""
     data, path = _load("coverage")
@@ -453,11 +453,11 @@ def handle_uncovered():
         _respond(f"I couldn't find coverage_report.json at {path}.")
         return
 
-    uncovered = data.get("uncovered_lines", [])
-    stmt_pct  = data.get("statement_coverage_pct", data.get("line_coverage_pct", "unknown"))
+    uncovered  = data.get("uncovered_lines", [])
+    stmt_pct   = data.get("statement_coverage_pct", "unknown")
     branch_pct = data.get("branch_coverage_pct", "unknown")
-    exec_lines = data.get("executable_lines", "?")
-    cov_lines  = data.get("covered_lines", "?")
+    exec_lines = data.get("total_executable", "?")   # field is total_executable
+    cov_lines  = data.get("total_covered", "?")      # field is total_covered; covered_lines is the list
 
     if not uncovered:
         msg = (f"Every executable line was covered! Statement coverage is {stmt_pct}% "
@@ -487,22 +487,23 @@ def handle_covered_lines():
         _respond(f"I couldn't find coverage_report.json at {path}.")
         return
 
-    covered = data.get("covered_lines_list", [])
-    stmt_pct = data.get("statement_coverage_pct", data.get("line_coverage_pct", "unknown"))
+    covered  = data.get("covered_lines", [])   # list of covered line numbers
+    stmt_pct = data.get("statement_coverage_pct", "unknown")
 
     if covered:
         msg = (f"Statement coverage is {stmt_pct}%. "
                f"The following {len(covered)} lines were executed at least once: "
-               f"{covered}.")
+               f"{covered}. "
+               f"Per-line hit counts are in coverage_report.json under 'line_details'.")
     else:
         msg = (f"Statement coverage is {stmt_pct}%. "
-               f"Detailed per-line coverage is stored in coverage_report.json "
-               f"under the 'line_hits' field.")
+               f"Per-line hit counts are stored in coverage_report.json "
+               f"under the 'line_details' field.")
 
     _respond(msg, source_keys=["coverage"])
 
 
-# Test results queries 
+# Test Results Queries 
 def handle_test_results():
     """How many tests passed/failed?"""
     data, path = _load("test_results")
@@ -547,7 +548,7 @@ def handle_test_cases_detail():
     _respond("\n".join(lines), source_keys=["test_results"])
 
 
-# Fuzzing queries 
+# Fuzzing Queries 
 def handle_fuzzing_crashes():
     """Did fuzzing find any crashes?"""
     afl, afl_path     = _load("afl_summary")
@@ -557,28 +558,35 @@ def handle_fuzzing_crashes():
         _respond(f"I couldn't find afl_summary.json at {afl_path}.")
         return
 
-    crashes   = afl.get("saved_crashes", afl.get("crash_count", 0))
-    queue     = afl.get("corpus_count",  afl.get("queue_size",  0))
-    run_time  = afl.get("run_time",  "~10 minutes")
-    exec_speed = afl.get("exec_speed", "")
+    # Exact field names from afl_summary.json:
+    #   unique_crashes, queue_inputs, run_duration_minutes, unique_hangs, seed_count
+    crashes      = afl.get("unique_crashes", 0)
+    queue        = afl.get("queue_inputs", 0)
+    duration_min = afl.get("run_duration_minutes", "?")
+    hangs        = afl.get("unique_hangs", 0)
+    seeds        = afl.get("seed_count", 0)
 
-    msg = (f"Yes — AFL++ found {crashes} crash-triggering input(s) during the fuzzing run "
-           f"(run time: {run_time}). The input queue grew to {queue} entries as AFL "
-           f"discovered new execution paths.")
+    # AFL places a README.txt automatically in the crash dir, so the true
+    # reproducible crash count is unique_crashes - 1 when unique_crashes >= 1.
+    real_crashes = max(0, crashes - 1) if crashes > 0 else 0
 
-    if crashes > 0:
+    msg = (f"AFL++ reported {crashes} entr{'y' if crashes == 1 else 'ies'} in its "
+           f"crash directory after a {duration_min}-minute run starting from {seeds} seed "
+           f"inputs. However, AFL automatically places a README.txt in that directory, "
+           f"so the true number of reproducible crash-triggering inputs is {real_crashes}. "
+           f"The input queue grew from {seeds} seeds to {queue} total entries as AFL "
+           f"discovered new execution paths. Hangs: {hangs}.")
+
+    if real_crashes > 0:
         msg += (f"\n\nThe crashes were caused by malformed inputs where Alt_Layer_Value "
                 f"was mutated to an extremely large value (e.g. 333333333). Since "
                 f"Alt_Layer_Value is used to index into the 4-element "
-                f"Positive_RA_Alt_Thresh[] array, an out-of-range value triggers an "
+                f"Positive_RA_Alt_Thresh[] array, an out-of-range index triggers an "
                 f"invalid memory access (segmentation fault). This reveals that tcas "
-                f"performs no bounds-checking on its inputs.")
+                f"performs no bounds-checking on its array-indexed inputs.")
 
     if notes:
-        msg += f"\n\nFull crash notes are at: {notes_path}"
-
-    if exec_speed:
-        msg += f"\n\nThe fuzzer ran at approximately {exec_speed} executions/second."
+        msg += f"\n\nFull crash notes: {notes_path}"
 
     _respond(msg, source_keys=["afl_summary", "afl_crashes"])
 
@@ -588,7 +596,8 @@ def handle_fuzzing_overview():
     handle_fuzzing_crashes()
 
 
-# Unknown queries! 
+# Unknown Queries! And help 
+
 def handle_help():
     _respond(
         "Here's what you can ask me about the tcas analysis:\n\n"
@@ -639,7 +648,7 @@ def route(query):
 
     # ── Exit commands ──────────────────────────────────────────────────────
     if ql in {"quit", "exit", "q", "bye", "goodbye"}:
-        print("\n  See you! The data files are in analysis_store/ whenever you need them.\n")
+        print("\n  Goodbye!\n")
         sys.exit(0)
 
     # ── Help ───────────────────────────────────────────────────────────────
@@ -824,7 +833,6 @@ def main():
         route(query)
         return
 
-    # Interactive REPL
     print("  Ask me anything about the tcas static analysis, testing, or fuzzing.")
     print("  Type 'help' for example queries, or 'quit' to exit.\n")
 
@@ -837,6 +845,7 @@ def main():
         if not raw:
             continue
         route(raw)
+
 
 if __name__ == "__main__":
     main()

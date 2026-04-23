@@ -4,7 +4,7 @@ This guide provides the essential locations and commands for working with the TC
 
 ---
 
-## 1. File Locations
+## 1. File Locations (needs update, adding this to test commit on github)
 
 | Component | Path | Description |
 | :--- | :--- | :--- |

@@ -1,0 +1,10 @@
+
+Key word searching!! 
+
+EX: dependency, call graph, cfg, etc. Those words would map to the file but maybe also have more specific queires 
+Only need to follow the three queries 
+Need a response, think of like a chat bot 
+
+# Questions 
+# 1. Keyword
+# 2. Output format (natural response like a chatbot, direction to file, etc.)

@@ -34,7 +34,7 @@ const PREDEFINED_QUESTIONS = {
 };
 
 function App() {
-  // NEW: State to track which view we are on ('home' or 'about')
+  // state to track which view we are on ('home', 'about', or 'aboutUs), start at home
   const [currentView, setCurrentView] = useState('home'); 
   
   const [openCategory, setOpenCategory] = useState(null);
@@ -45,7 +45,7 @@ function App() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading, currentView]); // Added currentView to dependencies
+  }, [messages, isLoading, currentView]); 
 
   const toggleCategory = (category) => {
     setOpenCategory(openCategory === category ? null : category);
@@ -92,11 +92,8 @@ function App() {
   return (
     <div className="page-wrapper">
       <div className="app-container">
-        
-        {/* HEADER */}
         <header className="header">
           <div className="header-left">
-            {/* NEW: Make the logo clickable to go back home */}
             <h1 
               className="logo" 
               onClick={() => setCurrentView('home')}
@@ -105,7 +102,6 @@ function App() {
               CS 4130
             </h1>
             <nav className="nav-links">
-              {/* NEW: Click handler to change view to 'about' */}
               <a 
                 href="#" 
                 onClick={(e) => {
@@ -115,7 +111,10 @@ function App() {
               >
                 About TCAS
               </a>
-              <a href="/about-us" target="_blank" rel="noopener noreferrer">About Us</a>
+              <a href="#" onClick={(e)=>{
+                e.preventDefault();
+                setCurrentView('aboutUs')
+              }} >About Us</a>
             </nav>
           </div>
           <div className="header-buttons">
@@ -124,10 +123,10 @@ function App() {
           </div>
         </header>
 
-        {/* CONDITIONAL RENDER: Show Home or About depending on state */}
+        {/* Show Home/About TCAS/About Us */}
         {currentView === 'home' ? (
           
-          /* --- HOME VIEW (Chat & Sidebar) --- */
+          /* Home View*/
           <div className="main-layout">
             <aside className="sidebar">
               <h2 className="sidebar-title">Not sure what to ask?</h2>
@@ -204,9 +203,9 @@ function App() {
             </main>
           </div>
 
-        ) : (
+        ) : currentView === 'about' ? (
 
-          /* --- ABOUT VIEW --- */
+          /* about TCAS view */
           <div className="about-layout">
             <h2>What is TCAS?</h2>
             <p>
@@ -227,6 +226,14 @@ function App() {
             </p>
           </div>
 
+        ) : (
+          /* about us view */
+          <div className="about-layout">
+            <h2>About Us</h2>
+            <p>
+              We are a team of 5 undergraduate COMS 4130 students. 
+            </p>
+          </div>
         )}
 
       </div>

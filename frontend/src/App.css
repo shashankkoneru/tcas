@@ -1,13 +1,10 @@
-/* App.css */
-
-/* Global Page Setup */
 body, html {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow: hidden; /* Prevent full-page scrolling, let inner containers scroll */
+  overflow: hidden; 
 }
 
 .page-wrapper {
@@ -27,7 +24,6 @@ body, html {
   box-sizing: border-box;
 }
 
-/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -35,7 +31,7 @@ body, html {
   padding-bottom: 20px;
   border-bottom: 1px solid #777;
   margin-bottom: 30px;
-  flex-shrink: 0; /* Keep header from shrinking */
+  flex-shrink: 0; 
 }
 
 .header-left {
@@ -85,15 +81,13 @@ body, html {
   background-color: #c4263e;
 }
 
-/* Main Layout */
 .main-layout {
   display: flex;
   gap: 30px;
-  flex-grow: 1; /* Allow main layout to fill remaining vertical space */
-  min-height: 0; /* Critical for nested flex scrolling */
+  flex-grow: 1;
+  min-height: 0; 
 }
 
-/* Sidebar */
 .sidebar {
   width: 280px;
   display: flex;
@@ -173,7 +167,6 @@ body, html {
   background: #e6e6e6;
 }
 
-/* Chat Area */
 .chat-area {
   flex-grow: 1;
   background-color: #f0f0f0;
@@ -181,7 +174,7 @@ body, html {
   display: flex;
   flex-direction: column;
   padding: 30px;
-  min-width: 0; /* Critical for flex items to shrink properly */
+  min-width: 0; /* so flex items to shrink properly */
 }
 
 .messages-container {
@@ -243,11 +236,10 @@ body, html {
   color: #777;
 }
 
-/* Chat Input */
 .chat-input-wrapper {
   display: flex;
   flex-direction: column;
-  flex-shrink: 0; /* Keep input from being crushed */
+  flex-shrink: 0; 
 }
 
 .input-label {
@@ -286,7 +278,6 @@ body, html {
   color: #a31d3f;
 }
 
-/* About View Layout */
 .about-layout {
   padding: 40px;
   max-width: 800px;
@@ -301,7 +292,7 @@ body, html {
   margin-bottom: 20px;
 }
 
-/* Add hover effect to the logo so people know it's a home button */
+/* hover effect to logo so people know it's a button not just text */
 .logo:hover {
   opacity: 0.8;
 }

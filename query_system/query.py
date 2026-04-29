@@ -142,13 +142,13 @@ def _source_line(key):
     return labels.get(key, key)
 
 
-def _divider():
-    print("─" * 72)
+# def _divider():
+#     print("─" * 72)
 
 
 def _respond(text, source_keys=None):
     """Print a formatted chatbot response with optional source citation."""
-    _divider()
+    # _divider()
     print()
     # Word-wrap each paragraph
     for para in text.strip().split("\n"):

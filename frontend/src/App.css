@@ -52,6 +52,7 @@ body, html {
   color: #000;
   font-size: 1.3rem;
   margin-right: 30px;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -187,6 +188,19 @@ body, html {
   padding-right: 10px;
 }
 
+
+/* hide scrollbars but keep functionality */
+.messages-container::-webkit-scrollbar,
+.dropdown-container::-webkit-scrollbar {
+  display: none;
+}
+
+.messages-container,
+.dropdown-container {
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
+}
+
 .empty-state {
   text-align: center;
   color: #888;
@@ -295,4 +309,39 @@ body, html {
 /* hover effect to logo so people know it's a button not just text */
 .logo:hover {
   opacity: 0.8;
+}
+
+
+/* responsive layout for very small screen */
+@media (max-width: 850px) {
+  body, html {
+    overflow-y: auto; 
+  }
+
+  /* change to vertical stack of items nav */
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-height: 250px; 
+    padding-bottom: 15px;
+  }
+
+  .chat-area {
+    min-height: 400px;
+  }
 }

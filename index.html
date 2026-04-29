@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS 4130 - TCAS Query System</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { display: flex; max-width: 1000px; margin: 0 auto; gap: 20px; }
+
+        /* Sidebar / Dropdown Area */
+        .sidebar { width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .sidebar h3 { margin-top: 0; }
+        .question-btn { display: block; width: 100%; text-align: left; background: #f0f0f0; border: none; padding: 10px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .question-btn:hover { background: #e0e0e0; }
+
+        /* Chat Area */
+        .chat-area { flex-grow: 1; background: white; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; min-height: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .chat-box { flex-grow: 1; overflow-y: auto; margin-bottom: 20px; padding-right: 10px; }
+        .message { margin-bottom: 15px; line-height: 1.5; }
+        .user-msg { color: #800000; font-weight: bold; }
+        .bot-msg { background: #f9f9f9; padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; border-left: 4px solid #800000; }
+
+        /* Loading state */
+        .loading { color: #666; font-style: italic; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Not sure what to ask?</h3>
+            <p>Choose from our list of predefined questions!</p>
+
+            <button class="question-btn" onclick="askQuestion('Where is ALIM called?')">Where is ALIM called?</button>
+            <button class="question-btn" onclick="askQuestion('How many blocks does Non_Crossing_Biased_Climb have?')">How many blocks does Non_Crossing_Biased_Climb have?</button>
+            <button class="question-btn" onclick="askQuestion('Are Up_Separation and Down_Separation dependent?')">Are Up_Separation and Down_Separation dependent?</button>
+            <button class="question-btn" onclick="askQuestion('What lines are not covered?')">What lines are not covered?</button>
+            <button class="question-btn" onclick="askQuestion('Did fuzzing find any crashes?')">Did fuzzing find any crashes?</button>
+        </div>
+
+        <div class="chat-area">
+            <div class="chat-box" id="chatBox">
+                <div class="message">
+                    <strong>System:</strong> Welcome to the TCAS Query Interface. Click a question on the left to begin.
+                </div>
+            </div>
+            <div class="loading" id="loadingText">Querying the analysis store...</div>
+        </div>
+    </div>
+
+    <script>
+        async function askQuestion(questionText) {
+            const chatBox = document.getElementById('chatBox');
+            const loadingText = document.getElementById('loadingText');
+
+            // Display the user's question in the chat
+            chatBox.innerHTML += `<div class="message"><span class="user-msg">You:</span> ${questionText}</div>`;
+            loadingText.style.display = 'block';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Send the question to our Python Flask Backend
+                const response = await fetch('http://localhost:5000/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: questionText })
+                });
+
+                const data = await response.json();
+
+                // Hide loading text
+                loadingText.style.display = 'none';
+
+                if (data.answer) {
+                    chatBox.innerHTML += `<div class="message bot-msg">${data.answer}</div>`;
+                } else {
+                    chatBox.innerHTML += `<div class="message bot-msg" style="border-color: red;">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                loadingText.style.display = 'none';
+                chatBox.innerHTML += `<div class="message bot-msg" style="border-color: red;">Failed to connect to the backend server. Make sure app.py is running.</div>`;
+            }
+
+            // Auto-scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>

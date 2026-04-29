@@ -25,8 +25,7 @@ const PREDEFINED_QUESTIONS = {
   "TESTING": [
     "How many tests passed?",
     "Show me the test case breakdown",
-    "Show me the universe test distribution",
-    "What is the output distribution for all inputs?"
+    "Show me the universe test distribution"
   ],
   "FUZZING": [
     "Did fuzzing find any crashes?",
@@ -35,15 +34,18 @@ const PREDEFINED_QUESTIONS = {
 };
 
 function App() {
+  // NEW: State to track which view we are on ('home' or 'about')
+  const [currentView, setCurrentView] = useState('home'); 
+  
   const [openCategory, setOpenCategory] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [inputText, setInputText] = useState(""); // Track user input
+  const [inputText, setInputText] = useState(""); 
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+  }, [messages, isLoading, currentView]); // Added currentView to dependencies
 
   const toggleCategory = (category) => {
     setOpenCategory(openCategory === category ? null : category);
@@ -76,10 +78,9 @@ function App() {
     }
   };
 
-  // Handle typing and sending custom questions
   const handleSendInput = () => {
     handleAskQuestion(inputText);
-    setInputText(""); // Clear the input box after sending
+    setInputText(""); 
   };
 
   const handleKeyDown = (e) => {
@@ -92,11 +93,28 @@ function App() {
     <div className="page-wrapper">
       <div className="app-container">
         
+        {/* HEADER */}
         <header className="header">
           <div className="header-left">
-            <h1 className="logo">CS 4130</h1>
+            {/* NEW: Make the logo clickable to go back home */}
+            <h1 
+              className="logo" 
+              onClick={() => setCurrentView('home')}
+              style={{ cursor: 'pointer' }}
+            >
+              CS 4130
+            </h1>
             <nav className="nav-links">
-              <a href="/about-tcas" target="_blank" rel="noopener noreferrer">About TCAS</a>
+              {/* NEW: Click handler to change view to 'about' */}
+              <a 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentView('about');
+                }}
+              >
+                About TCAS
+              </a>
               <a href="/about-us" target="_blank" rel="noopener noreferrer">About Us</a>
             </nav>
           </div>
@@ -106,82 +124,110 @@ function App() {
           </div>
         </header>
 
-        <div className="main-layout">
+        {/* CONDITIONAL RENDER: Show Home or About depending on state */}
+        {currentView === 'home' ? (
           
-          <aside className="sidebar">
-            <h2 className="sidebar-title">Not sure what to ask?</h2>
-            <p className="sidebar-subtitle">Choose from our list of predefined questions!</p>
-            
-            <div className="dropdown-container">
-              {Object.keys(PREDEFINED_QUESTIONS).map((category) => (
-                <div key={category} className="category-block">
-                  <button 
-                    className="category-btn" 
-                    onClick={() => toggleCategory(category)}
-                  >
-                    <span>{category}</span>
-                    <span className={`arrow ${openCategory === category ? 'open' : ''}`}>˅</span>
-                  </button>
-                  
-                  {openCategory === category && (
-                    <div className="question-list">
-                      {PREDEFINED_QUESTIONS[category].map((q, idx) => (
-                        <button 
-                          key={idx} 
-                          className="question-btn"
-                          onClick={() => handleAskQuestion(q)}
-                        >
-                          {q}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </aside>
-
-          <main className="chat-area">
-            <div className="messages-container">
-              {messages.length === 0 && (
-                <div className="empty-state">
-                  Select a question from the left or type your own to start analyzing TCAS!
-                </div>
-              )}
+          /* --- HOME VIEW (Chat & Sidebar) --- */
+          <div className="main-layout">
+            <aside className="sidebar">
+              <h2 className="sidebar-title">Not sure what to ask?</h2>
+              <p className="sidebar-subtitle">Choose from our list of predefined questions!</p>
               
-              {messages.map((msg, index) => (
-                <div key={index} className={`message-wrapper ${msg.role}`}>
-                  <div className={`message-bubble ${msg.role}`}>
-                    {msg.content}
+              <div className="dropdown-container">
+                {Object.keys(PREDEFINED_QUESTIONS).map((category) => (
+                  <div key={category} className="category-block">
+                    <button 
+                      className="category-btn" 
+                      onClick={() => toggleCategory(category)}
+                    >
+                      <span>{category}</span>
+                      <span className={`arrow ${openCategory === category ? 'open' : ''}`}>˅</span>
+                    </button>
+                    
+                    {openCategory === category && (
+                      <div className="question-list">
+                        {PREDEFINED_QUESTIONS[category].map((q, idx) => (
+                          <button 
+                            key={idx} 
+                            className="question-btn"
+                            onClick={() => handleAskQuestion(q)}
+                          >
+                            {q}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
-              
-              {isLoading && (
-                <div className="message-wrapper bot">
-                  <div className="message-bubble bot loading">
-                    Analyzing...
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            <div className="chat-input-wrapper">
-              <div className="input-label">what would you like to know?</div>
-              <div className="input-box">
-                <input 
-                  type="text" 
-                  placeholder="Type a custom query here..."
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
-                <div className="send-icon" onClick={handleSendInput}>↗</div>
+                ))}
               </div>
-            </div>
-          </main>
-        </div>
+            </aside>
+
+            <main className="chat-area">
+              <div className="messages-container">
+                {messages.length === 0 && (
+                  <div className="empty-state">
+                    Select a question from the left or type your own to start analyzing TCAS!
+                  </div>
+                )}
+                
+                {messages.map((msg, index) => (
+                  <div key={index} className={`message-wrapper ${msg.role}`}>
+                    <div className={`message-bubble ${msg.role}`}>
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+                
+                {isLoading && (
+                  <div className="message-wrapper bot">
+                    <div className="message-bubble bot loading">
+                      Analyzing...
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="chat-input-wrapper">
+                <div className="input-label">what would you like to know?</div>
+                <div className="input-box">
+                  <input 
+                    type="text" 
+                    placeholder="Type a custom query here..."
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <div className="send-icon" onClick={handleSendInput}>↗</div>
+                </div>
+              </div>
+            </main>
+          </div>
+
+        ) : (
+
+          /* --- ABOUT VIEW --- */
+          <div className="about-layout">
+            <h2>What is TCAS?</h2>
+            <p>
+              The Traffic Alert and Collision Avoidance System (TCAS) is an aircraft collision avoidance system 
+              designed to reduce the incidence of mid-air collisions between aircraft. It monitors the airspace 
+              around an aircraft for other aircraft equipped with a corresponding active transponder, independent 
+              of air traffic control.
+            </p>
+            <p>
+              When a potential threat is detected, TCAS provides the pilots with visual and audible advisories. 
+              These include Traffic Advisories (TAs), which alert the crew to a nearby aircraft, and Resolution 
+              Advisories (RAs), which command the crew to maneuver the aircraft (e.g., "Climb", "Descend") to 
+              maintain safe separation.
+            </p>
+            <p>
+              This static analysis project explores a simplified version of the TCAS resolution logic, analyzing 
+              its control flow, data dependencies, and coverage characteristics.
+            </p>
+          </div>
+
+        )}
 
       </div>
     </div>

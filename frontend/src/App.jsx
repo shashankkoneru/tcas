@@ -102,31 +102,50 @@ function App() {
               CS 4130
             </h1>
             <nav className="nav-links">
-              <a 
-                href="#" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentView('about');
-                }}
-              >
-                About TCAS
-              </a>
-              <a href="#" onClick={(e)=>{
+            <a 
+              href="#" 
+              onClick={(e) => {
                 e.preventDefault();
-                setCurrentView('aboutUs')
-              }} >About Us</a>
-            </nav>
+                setCurrentView('about');
+              }}
+            >
+              About TCAS
+            </a>
+            <a href="#" onClick={(e) => {
+              e.preventDefault();
+              setCurrentView('aboutUs');
+            }}>
+              About Us
+            </a>
+            <a
+              href="https://github.com/shashankkoneru/tcas"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+            </a>
+          </nav>
           </div>
           <div className="header-buttons">
-            <button className="btn btn-call-graph">Call Graphs</button>
-            <button className="btn btn-cfg">Control Flow Graphs</button>
+            <button
+              className="btn btn-cfg"
+              onClick={() => setCurrentView('cfg')}
+            >
+              Control Flow Graph
+            </button>
+            <button
+              className="btn btn-call-graph"
+              onClick={() => setCurrentView('callGraph')}
+            >
+              Interprocedural Control Flow Graph
+            </button>
           </div>
         </header>
 
-        {/* Show Home/About TCAS/About Us */}
+        {/* Show Home / About TCAS / About Us / Call Graph / CFG */}
         {currentView === 'home' ? (
           
-          /* Home View*/
+          /* Home View */
           <div className="main-layout">
             <aside className="sidebar">
               <h2 className="sidebar-title">Not sure what to ask?</h2>
@@ -160,7 +179,7 @@ function App() {
                 ))}
               </div>
             </aside>
-
+ 
             <main className="chat-area">
               <div className="messages-container">
                 {messages.length === 0 && (
@@ -186,9 +205,9 @@ function App() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
-
+ 
               <div className="chat-input-wrapper">
-                <div className="input-label">what would you like to know?</div>
+                {/* <div className="input-label">what would you like to know?</div> */}
                 <div className="input-box">
                   <input 
                     type="text" 
@@ -202,10 +221,10 @@ function App() {
               </div>
             </main>
           </div>
-
+ 
         ) : currentView === 'about' ? (
-
-          /* about TCAS view */
+ 
+          /* About TCAS view */
           <div className="about-layout">
             <h2>What is TCAS?</h2>
             <p>
@@ -225,16 +244,75 @@ function App() {
               its control flow, data dependencies, and coverage characteristics.
             </p>
           </div>
-
-        ) : (
-          /* about us view */
+ 
+        ) : currentView === 'aboutUs' ? (
+ 
+          /* About Us view */
           <div className="about-layout">
             <h2>About Us</h2>
             <p>
-              We are a team of 5 undergraduate COMS 4130 students. 
+              We are a team of 5 undergraduate students, attending Iowa State University, who are enrolled in COMS 4130 for the Spring 2026 semester!
+            </p>
+            <p>
+              Kennedy Wendl is a senior majoring in Computer Science and Data Science! 
+              Outside of class, she loves to hangout with friends or go for a run. 
+              Her favorite lesson from CS 4130 was learning how to draw a CFG. 
             </p>
           </div>
-        )}
+ 
+        ) : currentView === 'callGraph' ? (
+ 
+          /* Call Graph view */
+          <div className="about-layout">
+            <h2>Interprocedural Control Flow Graph</h2>
+            <p>
+              The Interprocedural Control Flow Graph (ICFG) extends the CFG by connecting the control flow across all functions!
+              The ICFG captures how execution transfers between call sites and their callees. 
+              This allows us to reason about the program's behavior holistically, revealing cross-function dependencies and execution paths that wouldn't be visible when analyzing functions by themselves.
+            </p>
+            <div className="graph-image-container">
+              <img
+                src="public/tcas_icfg.png"
+                alt="TCAS Control Flow Graph"
+                className="graph-image"
+              />
+            </div>
+          </div>
+ 
+        ) : currentView === 'cfg' ? (
+ 
+          /* Control Flow Graph view */
+          <div className="about-layout">
+            <h2>Control Flow Graph</h2>
+            <p>
+              The control flow graphs (CFGs) below visualize the flow of execution through the TCAS logic, with each node representing a basic block of instructions and edges representing possible execution paths. 
+              Analyzing the CFGs allowed us to understand the program's branch structure and trace how logic flows through its various conditions and return paths!
+            </p>
+            <div className="graph-image-container">
+              <img
+                src="public/main_cfg.png"
+                alt="TCAS Call Graph for Main"
+                className="graph-image"
+              />
+              <img
+                src="public/alt_sep_test_cfg.png"
+                alt="TCAS Call Graph for Alt Sep Test"
+                className="graph-image"
+              />
+              <img
+                src="public/non_crossing_biased_climb_cfg.png"
+                alt="TCAS Call Graph for Non Crossing Biased Climb"
+                className="graph-image"
+              />
+              <img
+                src="public/non_crossing_biased_descend_cfg.png"
+                alt="TCAS Call Graph for Non Crossing Biased Descend"
+                className="graph-image"
+              />
+            </div>
+          </div>
+ 
+        ) : null}
 
       </div>
     </div>

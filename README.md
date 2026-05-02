@@ -96,29 +96,29 @@ For example, we have a query "Are Up_Separation and Down_Separation dependent?",
 Data is stored in JSON files under the query_system/analysis_store folder. 
 
 ### Query Engine
-This refers to query.py. This extracts tokens from any natural language input, gives them a score, and executes the necessary logic to retrieve the answer. 
+This refers to `query.py`. This extracts tokens from any natural language input, gives them a score, and executes the logic to retrieve the answer. 
 
 ### Backend
-app.py simply acts as a connection between query.py and the frontend. 
+`app.py` simply acts as a connection between query.py and the frontend. 
 
 ### Frontend
 A React-based UI featuring a chat, a list of pre-made queries, an "About Us" and "About TCAS" page, along with buttons to pull up images of the control flow graphs and interprocedural control flow graph. 
 
 # Troubleshooting
 
-1. "Failed to connect to the backend server" Error in UI
+### 1. "Failed to connect to the backend server" Error in UI
 
 Cause: The React frontend cannot reach the Flask server.
 
-Fix: Ensure app.py is currently running in a separate terminal window on port 5000 and that the venv is activated.
+Fix: Ensure `app.py` is currently running in a separate terminal window on port 5000 and that the venv is activated.
 
-2. Port 5000 or 5173 is already in use
+### 2. Port 5000 or 5173 is already in use
 
 Cause: A previous instance of the server was not shut down properly.
 
 Fix: In your terminal, press Ctrl + C to kill the current process. If it persists, you can force kill it using kill -9 $(lsof -t -i:5000) (for backend) or -i:5173 (for frontend).
 
-3. NPM Error: EPERM: operation not permitted, mkdir 'C:\Windows\frontend'
+### 3. NPM Error: EPERM: operation not permitted, mkdir 'C:\Windows\frontend'
 
 Cause: WSL is trying to use a Windows installation of npm to write Linux files, causing a cross-OS permission crash.
 

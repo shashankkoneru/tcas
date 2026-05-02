@@ -93,7 +93,7 @@ For example, we have a query "Are Up_Separation and Down_Separation dependent?",
 ## System Architecture
 
 ### Data Storage
-Data is stored in JSON files under the query_system/analysis_store folder. 
+Data is stored in JSON files under the `query_system/analysis_store` folder. 
 
 ### Query Engine
 This refers to `query.py`. This extracts tokens from any natural language input, gives them a score, and executes the logic to retrieve the answer. 
@@ -128,7 +128,7 @@ Fix: You must install a Linux-native version of Node/npm inside WSL. Run
 ```
 then restart your terminal and run:
 ```bash
-    nvm install 20.
+    nvm install 20
 ```
 
 

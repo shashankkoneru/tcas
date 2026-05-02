@@ -10,12 +10,14 @@ This project is a full-stack query system designed to analyze the `tcas` (Traffi
 ## Setup and Execution
 
 ### Prerequisites
-**Linux Environment Required**
-Because this project utilizes Linux-native analysis tools like AFL (American Fuzzy Lop) and `gcov`, this project **must be run in a Linux environment** (Ubuntu, Debian, etc.) or via **Windows Subsystem for Linux (WSL)**. Our developer team ran it in WSL. 
+**Environment Notes**
+The Flask/React query application can be run on macOS, Linux, or WSL. Windows users should use **Windows Subsystem for Linux (WSL)** because the original TCAS benchmark includes file names that Windows may not allow when cloning the repo.
 
-Ensure your Linux/WSL system has the following installed:
+If you need to regenerate Linux-native analysis artifacts with tools like AFL (American Fuzzy Lop) or `gcov`, use a Linux environment or WSL. The checked-in query data can still be viewed through the app on macOS.
+
+Ensure your system has the following installed:
 * **Python 3.10+** (with `venv` support)
-* **Node.js 20+ & npm** (Must be the Linux-native version, installed via NVM. Do *not* use a Windows installation of Node through WSL).
+* **Node.js 20+ & npm** (if using WSL, install the Linux-native version via NVM; do *not* use a Windows installation of Node through WSL).
 
 ### 1. Backend Setup (Query Engine & API)
 The backend requires a Python virtual environment to run the Flask server and execute `query.py`. Open a terminal in the root project directory:
@@ -32,7 +34,6 @@ source venv/bin/activate
 
 # Install required dependencies (Flask, Flask-CORS)
 pip install -r requirements.txt
-# (OR, run: pip install flask flask-cors)
 
 # Start the backend server
 python3 app.py

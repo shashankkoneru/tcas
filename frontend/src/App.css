@@ -366,3 +366,16 @@ body, html {
     min-height: 400px;
   }
 }
+
+
+.about-layout {
+  max-height: 800px; 
+  overflow-y: auto;  
+  scrollbar-width: none; 
+  
+  -ms-overflow-style: none; 
+}
+
+.about-layout::-webkit-scrollbar {
+  display: none;
+}

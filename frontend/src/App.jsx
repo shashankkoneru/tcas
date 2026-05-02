@@ -258,6 +258,26 @@ function App() {
               Outside of class, she loves to hangout with friends or go for a run. 
               Her favorite lesson from CS 4130 was learning how to draw a CFG. 
             </p>
+            <p>
+              Kaitlyn Hoyme is a senior majoring in Computer Science with a minor in Data Science! 
+              Outside of class, she loves to play sports and hangout with friends. 
+              Her favorite lesson from CS 4130 was learning about data flow problems. 
+            </p>
+            <p>
+              Ryan Horsey is a junior majoring in Software Engineering with a minor in Data Science! 
+              Outside of class, he loves to travel and try new foods. 
+              His favorite lesson from CS 4130 was learning about abstract interpretation. 
+            </p>
+            <p>
+              Shashank Koneru is a junior majoring in Computer Science with a minor in Data Science! 
+              Outside of class, he loves to watch movies and sports. 
+              His favorite lesson from CS 4130 was learning about the various testing strategies. 
+            </p>
+            <p>
+              Arnold Joy is a junior majoring in Software Engineering! 
+              Outside of class, he loves to relax and hangout with his friends. 
+              His favorite lesson from CS 4130 was learning about fuzzing. 
+            </p>
           </div>
  
         ) : currentView === 'callGraph' ? (

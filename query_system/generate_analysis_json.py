@@ -49,6 +49,64 @@ def extract_instructions(label_text):
             instrs.append(ln)
     return [i for i in instrs if i]
 
+def parse_call_graph(filepath):
+    """Dynamically parses callgraph.txt from LLVM."""
+    INTERNAL = {
+        "initialize", "ALIM", "Inhibit_Biased_Climb",
+        "Non_Crossing_Biased_Climb", "Non_Crossing_Biased_Descend",
+        "Own_Below_Threat", "Own_Above_Threat", "alt_sep_test", "main",
+    }
+
+    uses_count = {}
+    callees_map = {f: [] for f in INTERNAL}
+    callers_map = {f: [] for f in INTERNAL}
+    calls_external = {f: False for f in INTERNAL}
+
+    current_func = None
+    node_re = re.compile(r"Call graph node for function: '([^']+)'(?:.*#uses=(\d+))?")
+    call_re = re.compile(r"calls function '([^']+)'")
+    ext_call_re = re.compile(r"calls external node")
+
+    with open(filepath, 'r') as f:
+        for line in f:
+            line = line.strip()
+            
+            # Find which function block we are in
+            node_match = node_re.search(line)
+            if node_match:
+                current_func = node_match.group(1)
+                uses_count[current_func] = int(node_match.group(2)) if node_match.group(2) else 0
+                continue
+
+            # If inside an internal function block, find what it calls
+            if current_func and current_func in INTERNAL:
+                call_match = call_re.search(line)
+                if call_match:
+                    callee = call_match.group(1)
+                    if callee in INTERNAL:
+                        if callee not in callees_map[current_func]:
+                            callees_map[current_func].append(callee)
+                        if current_func not in callers_map[callee]:
+                            callers_map[callee].append(current_func)
+                    else:
+                        calls_external[current_func] = True # e.g. fprintf, atoi
+                elif ext_call_re.search(line):
+                    calls_external[current_func] = True
+
+    # Format it for the final JSON
+    call_graph = {}
+    for func in sorted(INTERNAL):
+        call_graph[func] = {
+            "callees": sorted(callees_map[func]),
+            "callers": sorted(callers_map[func]),
+            "call_site_count": uses_count.get(func, 0),
+            "is_entry": func == "main",
+            "is_leaf": len(callees_map[func]) == 0,
+            "calls_external": calls_external[func]
+        }
+
+    return call_graph
+
 def parse_cfg_dot(path, func_name):
     with open(path) as f:
         content = f.read()
@@ -103,66 +161,77 @@ def parse_cfg_dot(path, func_name):
         "edges":      edges,
     }
 
+
+def parse_dependency_summary(filepath):
+    """Dynamically parses dependency_summary.txt from LLVM phase 1."""
+    local_vars = {}
+    funcs = {}
+    current_target = None
+    is_func = False
+
+    with open(filepath, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line: continue
+
+            # Match headers like "1. enabled depends on:"
+            header_match = re.match(r'\d+\.\s+(.*?)\s+depends on:', line)
+            if header_match:
+                raw_target = header_match.group(1).replace("final ", "").replace(" output", "")
+                
+                # Check if the target is a function (based on your txt file naming)
+                is_func = raw_target in ["Non_Crossing_Biased_Climb", "Non_Crossing_Biased_Descend", "ALIM", "alt_sep_test"]
+                current_target = raw_target.replace("()", "")
+
+                if is_func:
+                    funcs[current_target] = {
+                        "reads_globals": [], "writes_globals": [], "calls": [],
+                        "return_depends_on_globals": [], "return_depends_on_functions": [],
+                        "source": "Parsed dynamically from dependency_summary.txt"
+                    }
+                else:
+                    # Rename alt_sep back to alt_sep_output to match the frontend expectations
+                    if current_target == "alt_sep": current_target = "alt_sep_output"
+                    local_vars[current_target] = {"depends_on_globals": [], "depends_on_functions": []}
+                continue
+
+            # Match dependencies like "- High_Confidence"
+            if line.startswith('-') and current_target:
+                dep_name = line.replace("-", "").strip()
+                is_dep_func = dep_name.endswith("()")
+                clean_dep = dep_name.replace("()", "")
+
+                if is_func:
+                    if is_dep_func:
+                        funcs[current_target]["return_depends_on_functions"].append(clean_dep)
+                        funcs[current_target]["calls"].append(clean_dep)
+                    else:
+                        funcs[current_target]["return_depends_on_globals"].append(clean_dep)
+                        funcs[current_target]["reads_globals"].append(clean_dep)
+                else:
+                    if is_dep_func:
+                        local_vars[current_target]["depends_on_functions"].append(clean_dep)
+                    else:
+                        local_vars[current_target]["depends_on_globals"].append(clean_dep)
+
+    return local_vars, funcs
+
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. CALL GRAPH
 # ─────────────────────────────────────────────────────────────────────────────
-INTERNAL = {
-    "initialize", "ALIM", "Inhibit_Biased_Climb",
-    "Non_Crossing_Biased_Climb", "Non_Crossing_Biased_Descend",
-    "Own_Below_Threat", "Own_Above_Threat", "alt_sep_test", "main",
-}
+cg_file_path = REPO_ROOT / "source.alt" / "source.orig" / "outputs" / "callgraph" / "callgraph.txt"
 
-raw_cg_edges = [
-    ("Non_Crossing_Biased_Climb",   "Inhibit_Biased_Climb"),
-    ("Non_Crossing_Biased_Climb",   "Own_Below_Threat"),
-    ("Non_Crossing_Biased_Climb",   "ALIM"),
-    ("Non_Crossing_Biased_Climb",   "Own_Above_Threat"),
-    ("Non_Crossing_Biased_Descend", "Inhibit_Biased_Climb"),
-    ("Non_Crossing_Biased_Descend", "Own_Below_Threat"),
-    ("Non_Crossing_Biased_Descend", "ALIM"),
-    ("Non_Crossing_Biased_Descend", "Own_Above_Threat"),
-    ("alt_sep_test", "Non_Crossing_Biased_Climb"),
-    ("alt_sep_test", "Own_Below_Threat"),
-    ("alt_sep_test", "Non_Crossing_Biased_Descend"),
-    ("alt_sep_test", "Own_Above_Threat"),
-    ("main", "fprintf"),
-    ("main", "exit"),
-    ("main", "initialize"),
-    ("main", "alt_sep_test"),
-]
-
-uses_count = {
-    "ALIM": 5, "Inhibit_Biased_Climb": 3,
-    "Non_Crossing_Biased_Climb": 2, "Non_Crossing_Biased_Descend": 2,
-    "Own_Above_Threat": 5, "Own_Below_Threat": 5,
-    "alt_sep_test": 2, "atoi": 1, "exit": 3,
-    "fprintf": 7, "initialize": 2, "main": 1,
-}
-
-callees_map = {f: [] for f in INTERNAL}
-callers_map = {f: [] for f in INTERNAL}
-for caller, callee in raw_cg_edges:
-    if callee not in callees_map[caller]:
-        callees_map[caller].append(callee)
-    if callee in callers_map and caller not in callers_map[callee]:
-        callers_map[callee].append(caller)
-
-call_graph = {
-    func: {
-        "callees":         sorted(callees_map[func]),
-        "callers":         sorted(callers_map[func]),
-        "call_site_count": uses_count.get(func, 0),
-        "is_entry":        func == "main",
-        "is_leaf":         len(callees_map[func]) == 0,
-        "calls_external":  func == "main",
-    }
-    for func in sorted(INTERNAL)
-}
+if cg_file_path.exists():
+    call_graph = parse_call_graph(cg_file_path)
+    print(f"Parsed call graph from {cg_file_path.name}")
+else:
+    print(f"WARNING: {cg_file_path} not found. Call graph will be empty.")
+    call_graph = {}
 
 out_path = OUT_DIR / "call_graph.json"
 with open(out_path, "w") as f:
     json.dump(call_graph, f, indent=2)
-print(f"✓ {out_path}")
+print(f"Good: {out_path}")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. CFGs
@@ -189,7 +258,8 @@ for fname, dpath in dot_files.items():
 out_path = OUT_DIR / "cfg.json"
 with open(out_path, "w") as f:
     json.dump(cfg_output, f, indent=2)
-print(f"✓ {out_path}")
+print(f"{out_path}")
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3. DEPENDENCIES
@@ -202,100 +272,14 @@ GLOBALS = [
     "Other_RAC", "Other_Capability", "Climb_Inhibit",
 ]
 
-local_var_deps = {
-    "enabled": {
-        "depends_on_globals":   ["High_Confidence", "Own_Tracked_Alt_Rate", "Cur_Vertical_Sep"],
-        "depends_on_functions": [],
-    },
-    "tcas_equipped": {
-        "depends_on_globals":   ["Other_Capability"],
-        "depends_on_functions": [],
-    },
-    "intent_not_known": {
-        "depends_on_globals":   ["Two_of_Three_Reports_Valid", "Other_RAC"],
-        "depends_on_functions": [],
-    },
-    "need_upward_RA": {
-        "depends_on_globals":   GLOBALS,
-        "depends_on_functions": ["Non_Crossing_Biased_Climb", "Own_Below_Threat"],
-    },
-    "need_downward_RA": {
-        "depends_on_globals":   GLOBALS,
-        "depends_on_functions": ["Non_Crossing_Biased_Descend", "Own_Above_Threat"],
-    },
-    "alt_sep_output": {
-        "depends_on_globals":   GLOBALS,
-        "depends_on_functions": ["Non_Crossing_Biased_Climb", "Non_Crossing_Biased_Descend",
-                                 "Own_Below_Threat", "Own_Above_Threat"],
-        "note": "Final output. Transitively depends on all 13 global inputs.",
-    },
-}
-
-func_deps = {
-    "initialize": {
-        "reads_globals": [], "writes_globals": ["Positive_RA_Alt_Thresh"],
-        "calls": [],
-        "return_depends_on_globals": [], "return_depends_on_functions": [],
-    },
-    "ALIM": {
-        "reads_globals": ["Alt_Layer_Value", "Positive_RA_Alt_Thresh"],
-        "writes_globals": [], "calls": [],
-        "return_depends_on_globals":   ["Alt_Layer_Value", "Positive_RA_Alt_Thresh"],
-        "return_depends_on_functions": [],
-    },
-    "Inhibit_Biased_Climb": {
-        "reads_globals": ["Climb_Inhibit", "Up_Separation"],
-        "writes_globals": [], "calls": [],
-        "return_depends_on_globals":   ["Climb_Inhibit", "Up_Separation"],
-        "return_depends_on_functions": [],
-    },
-    "Own_Below_Threat": {
-        "reads_globals": ["Own_Tracked_Alt", "Other_Tracked_Alt"],
-        "writes_globals": [], "calls": [],
-        "return_depends_on_globals":   ["Own_Tracked_Alt", "Other_Tracked_Alt"],
-        "return_depends_on_functions": [],
-    },
-    "Own_Above_Threat": {
-        "reads_globals": ["Other_Tracked_Alt", "Own_Tracked_Alt"],
-        "writes_globals": [], "calls": [],
-        "return_depends_on_globals":   ["Own_Tracked_Alt", "Other_Tracked_Alt"],
-        "return_depends_on_functions": [],
-    },
-    "Non_Crossing_Biased_Climb": {
-        "reads_globals": ["Climb_Inhibit", "Up_Separation", "Down_Separation",
-                          "Own_Tracked_Alt", "Other_Tracked_Alt",
-                          "Cur_Vertical_Sep", "Alt_Layer_Value", "Positive_RA_Alt_Thresh"],
-        "writes_globals": [],
-        "calls": ["Inhibit_Biased_Climb", "Own_Below_Threat", "ALIM", "Own_Above_Threat"],
-        "return_depends_on_globals":   ["Climb_Inhibit", "Up_Separation", "Down_Separation",
-                                        "Own_Tracked_Alt", "Other_Tracked_Alt",
-                                        "Cur_Vertical_Sep", "Alt_Layer_Value", "Positive_RA_Alt_Thresh"],
-        "return_depends_on_functions": ["Inhibit_Biased_Climb", "Own_Below_Threat", "ALIM", "Own_Above_Threat"],
-        "source": "dependency_summary.txt item 7",
-    },
-    "Non_Crossing_Biased_Descend": {
-        "reads_globals": ["Climb_Inhibit", "Up_Separation", "Down_Separation",
-                          "Own_Tracked_Alt", "Other_Tracked_Alt",
-                          "Cur_Vertical_Sep", "Alt_Layer_Value", "Positive_RA_Alt_Thresh"],
-        "writes_globals": [],
-        "calls": ["Inhibit_Biased_Climb", "Own_Below_Threat", "ALIM", "Own_Above_Threat"],
-        "return_depends_on_globals":   ["Climb_Inhibit", "Up_Separation", "Down_Separation",
-                                        "Own_Tracked_Alt", "Other_Tracked_Alt",
-                                        "Cur_Vertical_Sep", "Alt_Layer_Value", "Positive_RA_Alt_Thresh"],
-        "return_depends_on_functions": ["Inhibit_Biased_Climb", "Own_Below_Threat", "ALIM", "Own_Above_Threat"],
-        "source": "dependency_summary.txt item 8",
-    },
-    "alt_sep_test": {
-        "reads_globals": GLOBALS,
-        "writes_globals": [],
-        "calls": ["Non_Crossing_Biased_Climb", "Non_Crossing_Biased_Descend",
-                  "Own_Below_Threat", "Own_Above_Threat"],
-        "return_depends_on_globals":   GLOBALS,
-        "return_depends_on_functions": ["Non_Crossing_Biased_Climb", "Non_Crossing_Biased_Descend",
-                                        "Own_Below_Threat", "Own_Above_Threat"],
-        "source": "dependency_summary.txt items 1-6",
-    },
-}
+# Dynamically parse the LLVM output file
+dep_file_path = REPO_ROOT / "source.alt" / "source.orig" / "outputs" / "dependencies" / "dependency_summary.txt"
+if dep_file_path.exists():
+    local_var_deps, func_deps = parse_dependency_summary(dep_file_path)
+    print(f"Parsed dependencies from {dep_file_path.name}")
+else:
+    print(f"WARNING: {dep_file_path} not found. Dependencies will be empty.")
+    local_var_deps, func_deps = {}, {}
 
 pairs = {}
 for func, info in func_deps.items():

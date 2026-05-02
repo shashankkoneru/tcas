@@ -103,8 +103,6 @@
   "main": {
     "callees": [
       "alt_sep_test",
-      "exit",
-      "fprintf",
       "initialize"
     ],
     "callers": [],

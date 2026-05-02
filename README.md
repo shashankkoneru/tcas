@@ -34,6 +34,7 @@ source venv/bin/activate
 
 # Install required dependencies (Flask, Flask-CORS)
 pip install -r requirements.txt
+# (OR, run: pip install flask flask-cors)
 
 # Start the backend server
 python3 app.py

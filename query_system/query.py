@@ -39,7 +39,7 @@ FILES = {
     "test_results":      os.path.join(STORE_DIR, "test_results.json"),
     "universe_summary":  os.path.join(STORE_DIR, "universe_summary.json"),
     "afl_summary":       os.path.join(STORE_DIR, "afl_summary.json"),
-    "afl_crashes":       os.path.join(STORE_DIR, "afl_crash_notes.txt"),
+    "afl_crashes":       "source.alt/source.orig/testing/afl/afl_crash_notes.txt",
 }
 
 # All known function names in tcas

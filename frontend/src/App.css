@@ -324,9 +324,19 @@ body, html {
   gap: 2rem;               /* space between images */
 }
 
+
 .graph-image {
   width: 100%;
   max-width: 900px;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.about-us-image {
+  width: 50%;
+  max-width: 450px;
   height: auto;
   border: 1px solid #ddd;
   border-radius: 8px;

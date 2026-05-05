@@ -253,21 +253,49 @@ function App() {
             <p>
               We are a team of 5 undergraduate students, attending Iowa State University, who are enrolled in COMS 4130 for the Spring 2026 semester!
             </p>
+            <div className="graph-image-container">
+              <img
+                src="public/kennedy-about.jfif"
+                alt="Kennedy Image"
+                className="about-us-image"
+              />
+            </div>
             <p>
               Kennedy Wendl is a senior majoring in Computer Science and Data Science! 
               Outside of class, she loves to hangout with friends or go for a run. 
               Her favorite lesson from CS 4130 was learning how to draw a CFG. 
             </p>
+             <div className="graph-image-container">
+              <img
+                src="public/kaitlyn-about.jfif"
+                alt="Kaitlyn Image"
+                className="about-us-image"
+              />
+            </div>
             <p>
               Kaitlyn Hoyme is a senior majoring in Computer Science with a minor in Data Science! 
               Outside of class, she loves to play sports and hangout with friends. 
               Her favorite lesson from CS 4130 was learning about data flow problems. 
             </p>
+            <div className="graph-image-container">
+              <img
+                src="public/ryan-about.jfif"
+                alt="Ryan Image"
+                className="about-us-image"
+              />
+            </div>
             <p>
               Ryan Horsey is a junior majoring in Software Engineering with a minor in Data Science! 
               Outside of class, he loves to travel and try new foods. 
               His favorite lesson from CS 4130 was learning about abstract interpretation. 
             </p>
+            <div className="graph-image-container">
+              <img
+                src="public/shashank-about.jfif"
+                alt="Shashank Image"
+                className="about-us-image"
+              />
+            </div>
             <p>
               Shashank Koneru is a junior majoring in Computer Science with a minor in Data Science! 
               Outside of class, he loves to watch movies and sports. 
